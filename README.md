@@ -1,5 +1,7 @@
 Calculadora de Salário Líquido e FGTS (2024)
 Este repositório contém uma simples calculadora web para estimar o salário líquido e o valor do FGTS com base no salário bruto, adiantamentos e ganhos extras. Os cálculos são realizados com base nas tabelas do INSS e Imposto de Renda válidas para o ano de 2024 no Brasil.
+
+Link ao vivo para conferência: https://calculasalarioliquido.netlify.app
 ________________________________________
 Funcionalidades
 •	Cálculo de Salário Líquido: Calcula o valor final que o empregado receberá após os descontos de INSS e Imposto de Renda.
