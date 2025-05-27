@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Salário Líquido e FGTS (2024)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Salário Líquido</h1>
+        <div class="aviso">
+            ATENÇÃO: Este cálculo utiliza as tabelas de INSS e IR válidas para o ano de <strong>2024</strong>. As tabelas de 2025 ainda não foram divulgadas.
+        </div>
+        <br>
+        <label for="salarioBruto">Salário Bruto (R$):</label>
+        <input type="text" id="salarioBruto" placeholder="Ex: 3.000,00 ou 11246.20">
+
+        <label for="valorMetade">Valor de Adiantamento/Outros Descontos (R$):</label>
+        <input type="text" id="valorMetade" placeholder="Opcional. Ex: 1.500,00 ou 2741.47">
+
+        <label>Ganhos Extras (Opcional):</label>
+        <div class="input-group">
+            <div class="input-item amount">
+                <input type="text" id="valorExtra" placeholder="Valor do ganho (Ex: 600,00)">
+            </div>
+            <div class="input-item">
+                <input type="text" id="quantidadeExtra" placeholder="Qtd. (Ex: 3)" pattern="[0-9]*">
+            </div>
+        </div>
+
+        <button onclick="calcularSalarioLiquido()">Calcular</button>
+
+        <div id="resultado" class="resultado" style="display: none;">
+            <p><strong>Salário Bruto Base:</strong> <span class="value-and-percent">R$ <span id="valorSalarioBrutoBase"></span></span></p>
+            <p id="linhaGanhosExtras" class="extra-gain-item" style="display: none;"><strong>Ganhos Extras:</strong> <span class="value-and-percent">R$ <span id="valorTotalExtras"></span></span></p>
+            <hr>
+            <p><strong>Salário Bruto Total:</strong> <span class="value-and-percent">R$ <span id="valorSalarioBrutoCalculo"></span></span></p>
+
+            <p class="discount-item"><strong>Desconto INSS:</strong> <span class="value-and-percent">R$ <span id="valorINSS"></span> <span class="percentage" id="percentINSS"></span></span></p>
+            <p class="discount-item"><strong>Desconto Imposto de Renda:</strong> <span class="value-and-percent">R$ <span id="valorIR"></span> <span class="percentage" id="percentIR"></span></span></p>
+            <p id="linhaAdiantamento" class="discount-item" style="display: none;"><strong>Desconto Adiantamento/Outros:</strong> <span class="value-and-percent">R$ <span id="valorAdiantamento"></span> <span class="percentage" id="percentAdiantamento"></span></span></p>
+            <hr>
+            <p class="fgts-info"><strong>FGTS (8% do Bruto):</strong> <span class="value-and-percent">R$ <span id="valorFGTS"></span> <span class="percentage">8,00%</span></span></p>
+            <hr>
+            <p class="final-value"><strong>Salário Líquido Final:</strong> <span class="value-and-percent">R$ <span id="valorSalarioLiquido"></span></span></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
