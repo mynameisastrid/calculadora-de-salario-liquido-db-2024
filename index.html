@@ -3,51 +3,637 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Salário Líquido e FGTS (2024)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <title>Calculadora Salário Bruto para Líquido e 13º (2025)</title>
+    <style>
+        :root {
+            --cor-fundo: #FFFFFF;
+            --cor-container: #F0F0F0;
+            --cor-texto-principal: #000000;
+            --cor-texto-secundario: #555555;
+            --cor-borda: #CCCCCC;
+
+            --cor-primaria: #000000;
+            --cor-primaria-hover: #333333;
+            --cor-liquido: #000000;
+            --cor-parcial: #333333;
+            --cor-desconto: #AA0000;
+            --cor-fgts: #555555;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto-principal);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.5s;
+        }
+
+        .container {
+            background-color: var(--cor-container);
+            padding: 35px;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 580px;
+            border: 1px solid var(--cor-borda);
+            transition: box-shadow 0.5s;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--cor-primaria);
+            margin-bottom: 30px;
+            font-size: 2em;
+            text-shadow: none;
+        }
+
+        h2, h3 {
+            color: var(--cor-primaria);
+            border-bottom: 1px solid var(--cor-borda);
+            padding-bottom: 5px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--cor-borda);
+        }
+
+        .tab-button {
+            padding: 12px 20px;
+            cursor: pointer;
+            border: none;
+            background-color: transparent;
+            font-weight: 600;
+            color: var(--cor-texto-secundario);
+            transition: color 0.3s, border-bottom 0.3s, background-color 0.3s;
+            border-bottom: 3px solid transparent;
+            margin-right: 15px;
+            font-size: 1.05em;
+        }
+
+        .tab-button:hover {
+            color: var(--cor-texto-principal);
+            background-color: #E0E0E0;
+        }
+
+        .tab-button.active {
+            color: var(--cor-primaria);
+            border-bottom: 3px solid var(--cor-primaria);
+            background-color: #E0E0E0;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--cor-texto-secundario);
+        }
+
+        input[type="number"], .input-com-checkbox, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1em;
+            background-color: #FFFFFF;
+            color: var(--cor-texto-principal);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: var(--cor-primaria);
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            outline: none;
+        }
+
+        .form-group-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 5px;
+            background-color: #FFFFFF;
+        }
+        
+        .form-group-checkbox label {
+            margin-bottom: 0;
+            margin-left: 10px;
+            font-weight: 400;
+            color: var(--cor-texto-principal);
+        }
+        
+        .form-group-checkbox input[type="checkbox"] {
+            transform: scale(1.3);
+            margin: 0;
+            accent-color: var(--cor-primaria);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--cor-primaria);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background-color: var(--cor-primaria-hover);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .resultado-area {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--cor-borda);
+        }
+
+        .resultado-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--cor-borda);
+        }
+        
+        .resultado-item span:first-child {
+            color: var(--cor-texto-secundario);
+            max-width: 70%;
+        }
+
+        .resultado-item.total-descontos {
+            font-weight: bold;
+            color: var(--cor-texto-principal);
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--cor-borda);
+        }
+
+        .resultado-item.liquido {
+            border-bottom: none;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--cor-liquido);
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid var(--cor-liquido);
+            box-shadow: none; 
+            border-radius: 5px;
+            padding: 15px;
+        }
+        
+        .resultado-item.liquido.parcial {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: var(--cor-parcial);
+            border-top: 2px solid var(--cor-parcial);
+            box-shadow: none;
+            padding: 10px;
+        }
+
+        .resultado-item.fgts {
+            color: var(--cor-fgts);
+            font-weight: normal;
+            font-size: 0.95em;
+        }
+        .resultado-item.fgts.anual {
+            font-weight: bold;
+            margin-top: 5px;
+            padding-top: 5px;
+            border-top: 1px dashed var(--cor-borda);
+        }
+
+        .desconto {
+            color: var(--cor-desconto);
+            font-weight: bold;
+        }
+
+        .alerta {
+            background-color: #F8F8F8; 
+            color: var(--cor-texto-secundario);
+            padding: 12px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        
+        .alerta-13 {
+            background-color: #F0F0F0;
+            color: var(--cor-texto-secundario);
+            border-color: var(--cor-borda);
+            font-size: 0.85em;
+        }
+        
+        .resultado-area h2 { color: var(--cor-primaria); }
+        .resultado-area h3[style*="3f7bba"] { color: var(--cor-parcial); } 
+        .resultado-area h3[style*="e44d26"] { color: var(--cor-desconto); } 
+        .resultado-area h3[style*="28a745"] { color: var(--cor-liquido); } 
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+            .resultado-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .resultado-item span:first-child {
+                margin-bottom: 5px;
+            }
+        }
+    </style>
 </head>
 <body>
+
     <div class="container">
-        <h1>Calculadora de Salário Líquido</h1>
-        <div class="aviso">
-            ATENÇÃO: Este cálculo utiliza as tabelas de INSS e IR válidas para o ano de <strong>2024</strong>. As tabelas de 2025 ainda não foram divulgadas.
-        </div>
-        <br>
-        <label for="salarioBruto">Salário Bruto (R$):</label>
-        <input type="text" id="salarioBruto" placeholder="Ex: 3.000,00 ou 11246.20">
+        <h1>💰 Calculadora de Salário e 13º (2025)</h1>
 
-        <label for="valorMetade">Valor de Adiantamento/Outros Descontos (R$):</label>
-        <input type="text" id="valorMetade" placeholder="Opcional. Ex: 1.500,00 ou 2741.47">
-
-        <label>Ganhos Extras (Opcional):</label>
-        <div class="input-group">
-            <div class="input-item amount">
-                <input type="text" id="valorExtra" placeholder="Valor do ganho (Ex: 600,00)">
-            </div>
-            <div class="input-item">
-                <input type="text" id="quantidadeExtra" placeholder="Qtd. (Ex: 3)" pattern="[0-9]*">
-            </div>
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab('salario', event)">Salário Líquido</button>
+            <button class="tab-button" onclick="openTab('decimoTerceiro', event)">13º Salário</button>
         </div>
 
-        <button onclick="calcularSalarioLiquido()">Calcular</button>
+        <div id="salario" class="tab-content active">
+            <div id="calculadoraForm">
+                <div class="form-group">
+                    <label for="salarioBruto">Salário Bruto Mensal (R$):</label>
+                    <input type="number" id="salarioBruto" value="3500.00" min="0" step="0.01">
+                </div>
 
-        <div id="resultado" class="resultado" style="display: none;">
-            <p><strong>Salário Bruto Base:</strong> <span class="value-and-percent">R$ <span id="valorSalarioBrutoBase"></span></span></p>
-            <p id="linhaGanhosExtras" class="extra-gain-item" style="display: none;"><strong>Ganhos Extras:</strong> <span class="value-and-percent">R$ <span id="valorTotalExtras"></span></span></p>
-            <hr>
-            <p><strong>Salário Bruto Total:</strong> <span class="value-and-percent">R$ <span id="valorSalarioBrutoCalculo"></span></span></p>
+                <div class="form-group">
+                    <label for="numDependentes">Número de Dependentes (para IRRF):</label>
+                    <input type="number" id="numDependentes" value="0" min="0" step="1">
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-group-checkbox">
+                        <input type="checkbox" id="descontaVT" onchange="calcularSalarioLiquido()" unchecked>
+                        <label for="descontaVT">Desconto de Vale-Transporte (VT) 6%</label>
+                    </div>
+                </div>
 
-            <p class="discount-item"><strong>Desconto INSS:</strong> <span class="value-and-percent">R$ <span id="valorINSS"></span> <span class="percentage" id="percentINSS"></span></span></p>
-            <p class="discount-item"><strong>Desconto Imposto de Renda:</strong> <span class="value-and-percent">R$ <span id="valorIR"></span> <span class="percentage" id="percentIR"></span></span></p>
-            <p id="linhaAdiantamento" class="discount-item" style="display: none;"><strong>Desconto Adiantamento/Outros:</strong> <span class="value-and-percent">R$ <span id="valorAdiantamento"></span> <span class="percentage" id="percentAdiantamento"></span></span></p>
-            <hr>
-            <p class="fgts-info"><strong>FGTS (8% do Bruto):</strong> <span class="value-and-percent">R$ <span id="valorFGTS"></span> <span class="percentage">8,00%</span></span></p>
-            <hr>
-            <p class="final-value"><strong>Salário Líquido Final:</strong> <span class="value-and-percent">R$ <span id="valorSalarioLiquido"></span></span></p>
+                <button onclick="calcularSalarioLiquido()">Calcular Salário Líquido</button>
+            </div>
+
+            <div class="resultado-area">
+                <h2 style="color: var(--cor-primaria); font-size: 1.3em;">Resumo dos Descontos e Benefícios (CLT - Mensal)</h2>
+                
+                <div class="resultado-item">
+                    <span>INSS (Obrigatório)</span>
+                    <span id="descontoINSS" class="desconto">R$ 0,00</span>
+                </div>
+
+                <div class="resultado-item">
+                    <span>IRRF (Obrigatório)</span>
+                    <span id="descontoIRRF" class="desconto">R$ 0,00</span>
+                </div>
+                
+                <div class="resultado-item">
+                    <span>Vale-Transporte (VT - Máx. 6%)</span>
+                    <span id="descontoVT" class="desconto">R$ 0,00</span>
+                </div>
+
+                <div class="resultado-item">
+                    <span>Base de Cálculo IRRF</span>
+                    <span id="baseIRRF" style="color: var(--cor-texto-principal);">R$ 0,00</span>
+                </div>
+                
+                <div class="resultado-item total-descontos">
+                    <span>Total de Descontos</span>
+                    <span id="totalDescontos" class="desconto">R$ 0,00</span>
+                </div>
+
+                <div class="resultado-item liquido">
+                    <span>Salário Líquido Estimado</span>
+                    <span id="salarioLiquido">R$ 0,00</span>
+                </div>
+
+                <h3 style="color: var(--cor-fgts); font-size: 1.15em; margin-top: 25px; margin-bottom: 10px;">Valores Depositados pelo Empregador</h3>
+                <div class="resultado-item fgts">
+                    <span>FGTS Mensal (8% sobre bruto)</span>
+                    <span id="fgtsMensal">R$ 0,00</span>
+                </div>
+                <div class="resultado-item fgts anual">
+                    <span>FGTS Anual (Estimado)</span>
+                    <span id="fgtsAnual">R$ 0,00</span>
+                </div>
+
+                <div class="alerta">
+                    **Atenção:** Esta é uma simulação. O cálculo final pode variar devido a outros descontos (Plano de Saúde, Empréstimo, etc.). As tabelas de INSS e IRRF podem ser reajustadas pelo Governo. O FGTS é um valor depositado pelo empregador, não descontado do seu salário.
+                </div>
+            </div>
+        </div>
+        
+        <div id="decimoTerceiro" class="tab-content">
+            <div id="calculadora13oForm">
+                   <div class="form-group">
+                    <label for="salarioBruto13">Salário Bruto Base do 13º (R$):</label>
+                    <input type="number" id="salarioBruto13" value="3500.00" min="0" step="0.01">
+                </div>
+
+                <div class="form-group">
+                    <label for="mesesTrabalhados">Meses Trabalhados no Ano (1 a 12):</label>
+                    <input type="number" id="mesesTrabalhados" value="12" min="1" max="12" step="1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="numDependentes13">Número de Dependentes (para IRRF do 13º):</label>
+                    <input type="number" id="numDependentes13" value="0" min="0" step="1">
+                </div>
+
+                <button onclick="calcularDecimoTerceiro()">Calcular 13º Salário</button>
+            </div>
+            
+            <div class="resultado-area">
+                <h2 style="color: var(--cor-fgts); font-size: 1.3em;">Resumo do 13º Salário (2025)</h2>
+                
+                <div class="resultado-item">
+                    <span>Valor Bruto Integral (12/12)</span>
+                    <span id="brutoIntegral13" style="color: var(--cor-texto-principal);">R$ 0,00</span>
+                </div>
+
+                <div class="resultado-item">
+                    <span>Valor Bruto Proporcional</span>
+                    <span id="brutoProporcional13" style="color: var(--cor-texto-principal);">R$ 0,00</span>
+                </div>
+                
+                <h3 style="color: var(--cor-parcial); font-size: 1.15em; margin-top: 15px; margin-bottom: 10px;">1ª Parcela (50% do Valor Bruto Proporcional)</h3>
+                <div class="resultado-item liquido parcial">
+                    <span>Valor da 1ª Parcela (Paga até 30/Nov)</span>
+                    <span id="parcela13_1">R$ 0,00</span>
+                </div>
+
+                <h3 style="color: var(--cor-desconto); font-size: 1.15em; margin-top: 15px; margin-bottom: 10px;">2ª Parcela (Com Descontos - Paga até 20/Dez)</h3>
+                
+                <div class="resultado-item">
+                    <span>Base de Cálculo do 13º (Bruto Proporcional)</span>
+                    <span id="baseCalculo13" style="color: var(--cor-texto-principal);">R$ 0,00</span>
+                </div>
+                
+                <div class="resultado-item">
+                    <span>(-) INSS sobre 13º (Integral)</span>
+                    <span id="descontoINSS13" class="desconto">R$ 0,00</span>
+                </div>
+                
+                    <div class="resultado-item">
+                    <span>(-) IRRF sobre 13º (Integral)</span>
+                    <span id="descontoIRRF13" class="desconto">R$ 0,00</span>
+                </div>
+
+                <div class="resultado-item total-descontos">
+                    <span>Total de Descontos (INSS + IRRF)</span>
+                    <span id="totalDescontos13" class="desconto">R$ 0,00</span>
+                </div>
+
+                <div class="resultado-item liquido">
+                    <span>Valor da 2ª Parcela (Líquido)</span>
+                    <span id="parcela13_2">R$ 0,00</span>
+                </div>
+                
+                <h3 style="color: var(--cor-liquido); font-size: 1.15em; margin-top: 15px; margin-bottom: 10px;">Valor Total Recebido (1ª + 2ª Parcelas Líquidas)</h3>
+                <div class="resultado-item liquido" style="border-top: 2px solid var(--cor-liquido);">
+                    <span>Total Líquido do 13º</span>
+                    <span id="totalLiquido13">R$ 0,00</span>
+                </div>
+
+
+                <div class="alerta alerta-13">
+                    **Nota sobre o 13º:** O INSS e o IRRF são descontados integralmente (sobre o valor bruto total) na **segunda parcela**. O Vale-Transporte (VT) e o FGTS não incidem sobre o 13º.
+                </div>
+            </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        const TETO_INSS = 8157.41;
+        const DESCONTO_MAX_INSS = 951.62;
+        const TABELA_INSS = [
+            { limite: 1518.00, aliquota: 0.075, deducao: 0.00 },
+            { limite: 2793.88, aliquota: 0.09, deducao: 22.77 },
+            { limite: 4190.83, aliquota: 0.12, deducao: 106.59 },
+            { limite: TETO_INSS, aliquota: 0.14, deducao: 190.40 } 
+        ];
+
+        const DEDUCAO_POR_DEPENDENTE = 189.59;
+        const TABELA_IRRF = [
+            { limite: 2428.80, aliquota: 0.00, deducao: 0.00 },
+            { limite: 2826.65, aliquota: 0.075, deducao: 182.16 },
+            { limite: 3751.05, aliquota: 0.15, deducao: 394.16 },
+            { limite: 4664.68, aliquota: 0.225, deducao: 675.49 },
+            { limite: Infinity, aliquota: 0.275, deducao: 908.73 } 
+        ];
+
+        const ALIQUOTA_VT = 0.06;
+        const ALIQUOTA_FGTS = 0.08;
+
+        function calcularINSS(salarioBruto) {
+            if (salarioBruto <= 0) return 0;
+            if (salarioBruto > TETO_INSS) return DESCONTO_MAX_INSS;
+
+            for (let i = 0; i < TABELA_INSS.length; i++) {
+                const faixa = TABELA_INSS[i];
+                if (salarioBruto <= faixa.limite) {
+                    return (salarioBruto * faixa.aliquota) - faixa.deducao;
+                }
+            }
+            return DESCONTO_MAX_INSS;
+        }
+
+        function calcularIRRF(baseCalculoIRRF) {
+            if (baseCalculoIRRF <= 0) return 0;
+
+            for (let i = 0; i < TABELA_IRRF.length; i++) {
+                const faixa = TABELA_IRRF[i];
+                if (baseCalculoIRRF <= faixa.limite) {
+                    let irrf = (baseCalculoIRRF * faixa.aliquota) - faixa.deducao;
+                    return Math.max(0, irrf);
+                }
+            }
+            const ultimaFaixa = TABELA_IRRF[TABELA_IRRF.length - 1];
+            let irrf = (baseCalculoIRRF * ultimaFaixa.aliquota) - ultimaFaixa.deducao;
+            return Math.max(0, irrf);
+        }
+
+        function calcularVT(salarioBruto, descontar) {
+            if (!descontar || salarioBruto <= 0) return 0;
+            return salarioBruto * ALIQUOTA_VT;
+        }
+
+        function calcularFGTS(salarioBruto) {
+            if (salarioBruto <= 0) return 0;
+            return salarioBruto * ALIQUOTA_FGTS;
+        }
+
+        function formatarMoeda(valor) {
+            valor = Math.round(valor * 100) / 100;
+            return `R$ ${valor.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}`;
+        }
+        
+        function calcularSalarioLiquido() {
+            const salarioBruto = parseFloat(document.getElementById('salarioBruto').value) || 0;
+            const numDependentes = parseInt(document.getElementById('numDependentes').value) || 0;
+            const descontarVT = document.getElementById('descontaVT').checked;
+
+            if (salarioBruto <= 0) {
+                const zero = formatarMoeda(0);
+                document.getElementById('descontoINSS').textContent = zero;
+                document.getElementById('descontoIRRF').textContent = zero;
+                document.getElementById('descontoVT').textContent = zero;
+                document.getElementById('baseIRRF').textContent = zero;
+                document.getElementById('totalDescontos').textContent = zero;
+                document.getElementById('salarioLiquido').textContent = zero;
+                document.getElementById('fgtsMensal').textContent = zero;
+                document.getElementById('fgtsAnual').textContent = zero;
+                return;
+            }
+
+            const descontoINSS = calcularINSS(salarioBruto);
+
+            const descontoVT = calcularVT(salarioBruto, descontarVT);
+
+            const deducaoDependentes = numDependentes * DEDUCAO_POR_DEPENDENTE;
+            const baseIRRF = salarioBruto - descontoINSS - deducaoDependentes;
+            
+            const descontoIRRF = calcularIRRF(baseIRRF);
+
+            const totalDescontos = descontoINSS + descontoIRRF + descontoVT;
+            const salarioLiquido = salarioBruto - totalDescontos;
+
+            const fgtsMensal = calcularFGTS(salarioBruto);
+            const fgtsAnual = fgtsMensal * 12;
+
+            document.getElementById('descontoINSS').textContent = formatarMoeda(descontoINSS);
+            document.getElementById('descontoIRRF').textContent = formatarMoeda(descontoIRRF);
+            document.getElementById('descontoVT').textContent = formatarMoeda(descontoVT);
+            document.getElementById('baseIRRF').textContent = formatarMoeda(Math.max(0, baseIRRF));
+            document.getElementById('totalDescontos').textContent = formatarMoeda(totalDescontos);
+            document.getElementById('salarioLiquido').textContent = formatarMoeda(salarioLiquido);
+            
+            document.getElementById('fgtsMensal').textContent = formatarMoeda(fgtsMensal);
+            document.getElementById('fgtsAnual').textContent = formatarMoeda(fgtsAnual);
+        }
+
+        function calcularDecimoTerceiro() {
+            const salarioBruto = parseFloat(document.getElementById('salarioBruto13').value) || 0;
+            let mesesTrabalhados = parseInt(document.getElementById('mesesTrabalhados').value) || 0;
+            const numDependentes = parseInt(document.getElementById('numDependentes13').value) || 0;
+
+            mesesTrabalhados = Math.min(Math.max(1, mesesTrabalhados), 12);
+
+            if (salarioBruto <= 0) {
+                const zero = formatarMoeda(0);
+                document.getElementById('brutoIntegral13').textContent = zero;
+                document.getElementById('brutoProporcional13').textContent = zero;
+                document.getElementById('parcela13_1').textContent = zero;
+                document.getElementById('baseCalculo13').textContent = zero;
+                document.getElementById('descontoINSS13').textContent = zero;
+                document.getElementById('descontoIRRF13').textContent = zero;
+                document.getElementById('totalDescontos13').textContent = zero;
+                document.getElementById('parcela13_2').textContent = zero;
+                document.getElementById('totalLiquido13').textContent = zero;
+                return;
+            }
+
+            const brutoIntegral = salarioBruto;
+            const brutoProporcional = (salarioBruto / 12) * mesesTrabalhados;
+            
+            const parcela1 = brutoProporcional * 0.5;
+
+            const descontoINSS = calcularINSS(brutoProporcional);
+
+            const deducaoDependentes = numDependentes * DEDUCAO_POR_DEPENDENTE;
+            const baseIRRF = brutoProporcional - descontoINSS - deducaoDependentes;
+            
+            const descontoIRRF = calcularIRRF(baseIRRF);
+
+            const totalDescontos = descontoINSS + descontoIRRF;
+
+            const parcela2 = brutoProporcional - totalDescontos - parcela1;
+            
+            const totalLiquido = parcela1 + parcela2;
+
+            document.getElementById('brutoIntegral13').textContent = formatarMoeda(brutoIntegral);
+            document.getElementById('brutoProporcional13').textContent = formatarMoeda(brutoProporcional);
+            document.getElementById('parcela13_1').textContent = formatarMoeda(parcela1);
+            
+            document.getElementById('baseCalculo13').textContent = formatarMoeda(brutoProporcional);
+            document.getElementById('descontoINSS13').textContent = formatarMoeda(descontoINSS);
+            document.getElementById('descontoIRRF13').textContent = formatarMoeda(descontoIRRF);
+            document.getElementById('totalDescontos13').textContent = formatarMoeda(totalDescontos);
+            document.getElementById('parcela13_2').textContent = formatarMoeda(parcela2);
+            document.getElementById('totalLiquido13').textContent = formatarMoeda(totalLiquido);
+        }
+
+        function openTab(tabName, event) {
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].style.display = 'none';
+                tabContents[i].classList.remove('active');
+            }
+
+            const tabButtons = document.getElementsByClassName('tab-button');
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+
+            document.getElementById(tabName).style.display = 'block';
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+            
+            if (tabName === 'decimoTerceiro') {
+                calcularDecimoTerceiro();
+            } else {
+                calcularSalarioLiquido();
+            }
+        }
+
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const activeTab = document.querySelector('.tab-content.active');
+                if (activeTab.id === 'salario') {
+                    calcularSalarioLiquido();
+                } else if (activeTab.id === 'decimoTerceiro') {
+                    calcularDecimoTerceiro();
+                }
+            }
+        });
+
+        window.onload = () => {
+            document.getElementById('decimoTerceiro').style.display = 'none';
+            document.getElementById('salario').style.display = 'block';
+            document.querySelector('.tab-button').classList.add('active');
+            calcularSalarioLiquido();
+            calcularDecimoTerceiro();
+        };
+
+    </script>
 </body>
 </html>
