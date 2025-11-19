@@ -1,4 +1,4 @@
-# 💰 Calculadora de Salário Líquido e 13º Salário (CLT - Brasil 2025)
+# 💰 Calculadora de Salário Líquido e 13º Salário (CLT - Brasil 2025) || Live @ https://calculasalarioliquido.netlify.app/
 
 Este é um projeto de simulação de cálculos trabalhistas (CLT) desenvolvido em **HTML, CSS e JavaScript Vanilla**.
 
