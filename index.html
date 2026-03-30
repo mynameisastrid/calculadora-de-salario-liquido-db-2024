@@ -625,6 +625,7 @@
     <button class="tab-btn active" onclick="switchTab('mensal', this)">Salário Mensal</button>
     <button class="tab-btn" onclick="switchTab('decimo', this)">13º Salário</button>
     <button class="tab-btn" onclick="switchTab('comparar', this)">Comparar</button>
+    <button class="tab-btn" onclick="switchTab('plr', this)">PLR</button>
   </div>
 
   <!-- ===== TAB: SALÁRIO MENSAL ===== -->
@@ -938,6 +939,121 @@
       Compare dois cenários salariais para visualizar o impacto real dos descontos sobre cada faixa.
     </div>
   </div>
+
+  <!-- ===== TAB: PLR ===== -->
+  <div id="tab-plr" class="tab-panel">
+    <div class="layout">
+      <!-- INPUT COLUMN -->
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="card">
+          <div class="card-title">Dados da PLR</div>
+
+          <div class="field">
+            <label for="plr-bruto">Valor bruto da PLR (anual)</label>
+            <div class="input-wrap has-prefix">
+              <span class="input-prefix">R$</span>
+              <input type="text" id="plr-bruto" value="10.000,00"
+                oninput="onSalInput('plr-bruto','plr-slider'); debouncedCalcPLR();"
+                onblur="formatOnBlur('plr-bruto','plr-slider'); debouncedCalcPLR();"
+                aria-label="Valor bruto da PLR anual">
+            </div>
+            <div class="slider-wrap">
+              <input type="range" id="plr-slider" min="0" max="200000" step="500" value="10000"
+                oninput="onSliderInput('plr-slider','plr-bruto'); debouncedCalcPLR();"
+                aria-label="Controle deslizante de PLR">
+              <span class="slider-val" id="plr-slider-val">R$ 10.000</span>
+            </div>
+            <div class="field-error" id="err-plr-bruto"></div>
+          </div>
+
+          <div class="field">
+            <label for="plr-parcelas">Número de parcelas</label>
+            <select id="plr-parcelas" onchange="debouncedCalcPLR()" aria-label="Número de parcelas da PLR"
+              style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font);font-size:0.9375rem;color:var(--text);background:var(--surface);outline:none;">
+              <option value="1">1 parcela (pagamento único)</option>
+              <option value="2" selected>2 parcelas</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- TABELA DE FAIXAS -->
+        <div class="card">
+          <div class="card-title">Tabela PLR 2025 — IRRF exclusivo</div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <th style="text-align:left;padding:6px 4px;color:var(--text3);font-weight:600;font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.06em;">Faixa (anual)</th>
+                  <th style="text-align:right;padding:6px 4px;color:var(--text3);font-weight:600;font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.06em;">Alíquota</th>
+                  <th style="text-align:right;padding:6px 4px;color:var(--text3);font-weight:600;font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.06em;">Dedução</th>
+                </tr>
+              </thead>
+              <tbody id="plr-tabela-faixas"></tbody>
+            </table>
+          </div>
+          <div class="notice" style="margin-top:0.75rem;padding:8px 10px;">
+            Isento de INSS e FGTS. Tributação exclusiva na fonte — não soma ao salário no ajuste anual.
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULT COLUMN -->
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="hero-result" aria-live="polite">
+          <div class="label">PLR líquida estimada</div>
+          <div class="value" id="plr-liquido">R$ 0,00</div>
+          <div class="sub" id="plr-sub">—</div>
+        </div>
+
+        <div class="metrics">
+          <div class="metric red">
+            <div class="m-label">IRRF retido</div>
+            <div class="m-val" id="plr-irrf">R$ 0,00</div>
+          </div>
+          <div class="metric">
+            <div class="m-label">Alíquota efetiva</div>
+            <div class="m-val" id="plr-aliq-efetiva">0,0%</div>
+          </div>
+          <div class="metric green">
+            <div class="m-label">Isenção INSS</div>
+            <div class="m-val">R$ 0,00</div>
+          </div>
+          <div class="metric green">
+            <div class="m-label">Faixa aplicada</div>
+            <div class="m-val" id="plr-faixa">—</div>
+          </div>
+        </div>
+
+        <!-- PARCELAS -->
+        <div class="card" id="plr-parcelas-card">
+          <div class="card-title">Parcelas</div>
+          <div id="plr-parcelas-detalhe"></div>
+        </div>
+
+        <!-- GRÁFICO -->
+        <div class="card">
+          <div class="card-title">Composição da PLR</div>
+          <div class="chart-wrap">
+            <canvas id="chart-plr"></canvas>
+            <div class="chart-center">
+              <span class="pct" id="chart-pct-plr">0%</span>
+              <span class="pct-label">IR</span>
+            </div>
+          </div>
+          <div class="legend" id="legend-plr"></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" onclick="copyResumoPLR()">Copiar resumo</button>
+          <button class="btn" onclick="shareUrl()">Compartilhar link</button>
+        </div>
+
+        <div class="notice">
+          A PLR é regulamentada pela Lei 10.101/2000. Tabela exclusiva vigente desde maio de 2025 (Lei 15.191/2025). Isenção de INSS e FGTS. Para declaração de IR, informe em "Rendimentos Sujeitos à Tributação Exclusiva/Definitiva", código 11.
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -967,7 +1083,17 @@ const CFG = {
     ]
   },
   vtAliq: 0.06,
-  fgtsAliq: 0.08
+  fgtsAliq: 0.08,
+  // Tabela PLR exclusiva — Lei 15.191/2025, vigente desde maio/2025
+  plr: {
+    faixas: [
+      { ate: 8214.41,   aliq: 0.000, ded: 0.00,     label: 'Isento'  },
+      { ate: 9922.28,   aliq: 0.075, ded: 616.08,   label: '7,5%'    },
+      { ate: 13167.00,  aliq: 0.15,  ded: 1360.25,  label: '15%'     },
+      { ate: 16380.38,  aliq: 0.225, ded: 2347.78,  label: '22,5%'   },
+      { ate: Infinity,  aliq: 0.275, ded: 3166.80,  label: '27,5%'   }
+    ]
+  }
 };
 
 // ─── CÁLCULOS ────────────────────────────────────────────────────────────────
@@ -1282,6 +1408,101 @@ function debounce(fn, ms) {
 const debouncedCalc    = debounce(calcMensal, 220);
 const debouncedCalc13  = debounce(calc13, 220);
 const debouncedCalcCmp = debounce(calcCmp, 220);
+const debouncedCalcPLR = debounce(calcPLR, 220);
+
+// ─── CALC PLR ─────────────────────────────────────────────────────────────────
+function calcIRRF_PLR(plrBruto) {
+  if (plrBruto <= 0) return { ir: 0, faixaIdx: 0 };
+  for (let i = 0; i < CFG.plr.faixas.length; i++) {
+    const f = CFG.plr.faixas[i];
+    if (plrBruto <= f.ate) {
+      return { ir: Math.max(0, plrBruto * f.aliq - f.ded), faixaIdx: i };
+    }
+  }
+  const last = CFG.plr.faixas[CFG.plr.faixas.length - 1];
+  return { ir: Math.max(0, plrBruto * last.aliq - last.ded), faixaIdx: CFG.plr.faixas.length - 1 };
+}
+
+function calcPLR() {
+  const bruto    = parseBRL(document.getElementById('plr-bruto').value);
+  const nParc    = parseInt(document.getElementById('plr-parcelas').value) || 1;
+
+  if (bruto <= 0) {
+    showError('plr-bruto', 'Informe um valor de PLR maior que zero.');
+    return;
+  }
+  if (bruto > 2000000) {
+    showError('plr-bruto', 'Valor muito alto. Verifique o campo.');
+    return;
+  }
+  clearError('plr-bruto');
+
+  const { ir, faixaIdx } = calcIRRF_PLR(bruto);
+  const liq = bruto - ir;
+  const aliqEfetiva = bruto > 0 ? (ir / bruto) * 100 : 0;
+  const faixaLabel = CFG.plr.faixas[faixaIdx].label;
+
+  setVal('plr-liquido', fmt(liq));
+  setVal('plr-sub', `${fmtPct(aliqEfetiva)} de IRRF · isento de INSS e FGTS`);
+  setVal('plr-irrf', fmt(ir));
+  setVal('plr-aliq-efetiva', fmtPct(aliqEfetiva));
+  setVal('plr-faixa', faixaLabel);
+
+  // Parcelas
+  const parcVal = liq / nParc;
+  const parcBruto = bruto / nParc;
+  let html = '';
+  for (let i = 1; i <= nParc; i++) {
+    const isLast = i === nParc;
+    html += `<div class="parcel-card ${isLast ? 'highlight' : ''}" style="margin-bottom:8px;text-align:left;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div class="p-label">${i}ª parcela${isLast && nParc > 1 ? ' (com IRRF)' : ''}</div>
+        <div style="font-size:0.75rem;color:${isLast ? 'rgba(255,255,255,0.5)' : 'var(--text3)'};">Bruto: ${fmt(parcBruto)}</div>
+      </div>
+      <div class="p-val">${fmt(parcVal)}</div>
+    </div>`;
+  }
+  document.getElementById('plr-parcelas-detalhe').innerHTML = html;
+
+  // Gráfico
+  let chartPLR = window._chartPLR;
+  const items = ir > 0
+    ? [{ label: 'Líquido', val: liq, color: COLORS.liq }, { label: 'IRRF', val: ir, color: COLORS.irrf }]
+    : [{ label: 'Líquido (isento)', val: liq, color: COLORS.liq }];
+  buildChartPLR(items);
+  updateLegend('legend-plr', items);
+  document.getElementById('chart-pct-plr').textContent = fmtPct(aliqEfetiva);
+
+  // Destaque da faixa na tabela
+  renderTabelaPLR(bruto);
+}
+
+let _chartPLR = null;
+function buildChartPLR(items) {
+  const ctx = document.getElementById('chart-plr').getContext('2d');
+  if (_chartPLR) { _chartPLR.destroy(); }
+  _chartPLR = new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels: items.map(i=>i.label), datasets: [{ data: items.map(i=>i.val), backgroundColor: items.map(i=>i.color), borderWidth: 2, borderColor: '#fff', hoverBorderWidth: 3 }] },
+    options: { cutout: '72%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => ' ' + fmt(ctx.raw) + ' (' + fmtPct(ctx.raw / ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0)*100) + ')' } } }, animation: { duration: 350 } }
+  });
+}
+
+function renderTabelaPLR(plrBruto) {
+  const tbody = document.getElementById('plr-tabela-faixas');
+  if (!tbody) return;
+  const faixas = CFG.plr.faixas;
+  tbody.innerHTML = faixas.map((f, i) => {
+    const ativo = plrBruto > (i === 0 ? 0 : faixas[i-1].ate) && plrBruto <= f.ate;
+    const bg = ativo ? 'background:var(--surface2);font-weight:600;' : '';
+    const ate = f.ate === Infinity ? 'Acima de ' + fmt(faixas[i-1]?.ate || 0) : 'Até ' + fmt(f.ate);
+    return `<tr style="${bg}">
+      <td style="padding:7px 4px;font-size:0.8rem;color:var(--text2);">${ate}</td>
+      <td style="padding:7px 4px;text-align:right;font-size:0.8rem;color:${f.aliq===0?'var(--green)':'var(--text)'};">${f.aliq === 0 ? 'Isento' : (f.aliq*100).toFixed(1).replace('.',',') + '%'}</td>
+      <td style="padding:7px 4px;text-align:right;font-size:0.8rem;color:var(--text2);">${f.ded > 0 ? fmt(f.ded) : '—'}</td>
+    </tr>`;
+  }).join('');
+}
 
 // ─── TABS ─────────────────────────────────────────────────────────────────────
 function switchTab(name, btn) {
@@ -1291,6 +1512,7 @@ function switchTab(name, btn) {
   btn.classList.add('active');
   if (name === 'decimo')  setTimeout(calc13, 50);
   if (name === 'comparar') setTimeout(calcCmp, 50);
+  if (name === 'plr')     setTimeout(calcPLR, 50);
 }
 
 // ─── COPIAR RESUMO ────────────────────────────────────────────────────────────
@@ -1313,6 +1535,15 @@ function copyResumo13() {
   navigator.clipboard.writeText(txt).then(() => showToast('Resumo copiado!')).catch(() => showToast('Não foi possível copiar.'));
 }
 
+function copyResumoPLR() {
+  const bruto = document.getElementById('plr-bruto').value;
+  const liq   = document.getElementById('plr-liquido').textContent;
+  const irrf  = document.getElementById('plr-irrf').textContent;
+  const aliq  = document.getElementById('plr-aliq-efetiva').textContent;
+  const txt   = `📊 Simulação de PLR 2025\n\nBruto: R$ ${bruto}\nIRRF retido: ${irrf}\nAlíquota efetiva: ${aliq}\n\n💰 PLR líquida: ${liq}\n\n✅ Isento de INSS e FGTS\n📋 Declarar em Rendimentos Sujeitos à Tributação Exclusiva/Definitiva (cód. 11)`;
+  navigator.clipboard.writeText(txt).then(() => showToast('Resumo copiado!')).catch(() => showToast('Não foi possível copiar.'));
+}
+
 // ─── SHARE URL ────────────────────────────────────────────────────────────────
 function shareUrl() {
   const p = new URLSearchParams({
@@ -1321,7 +1552,9 @@ function shareUrl() {
     vt:   document.getElementById('sal-vt').checked ? '1' : '0',
     d13:  parseBRL(document.getElementById('d13-bruto').value),
     mes:  document.getElementById('d13-meses').value,
-    dep13: document.getElementById('d13-dep').value
+    dep13: document.getElementById('d13-dep').value,
+    plr:  parseBRL(document.getElementById('plr-bruto').value),
+    plrp: document.getElementById('plr-parcelas').value
   });
   const url = location.href.split('?')[0] + '?' + p.toString();
   navigator.clipboard.writeText(url).then(() => showToast('Link copiado!')).catch(() => showToast('Não foi possível copiar.'));
@@ -1343,6 +1576,12 @@ function loadFromUrl() {
   }
   if (p.get('mes'))   document.getElementById('d13-meses').value = p.get('mes');
   if (p.get('dep13')) document.getElementById('d13-dep').value   = p.get('dep13');
+  if (p.get('plr')) {
+    document.getElementById('plr-bruto').value = toBRL(+p.get('plr'));
+    document.getElementById('plr-slider').value = Math.min(+p.get('plr'), 200000);
+    document.getElementById('plr-slider-val').textContent = 'R$ ' + Math.round(+p.get('plr')).toLocaleString('pt-BR');
+  }
+  if (p.get('plrp')) document.getElementById('plr-parcelas').value = p.get('plrp');
 }
 
 // ─── TOAST ────────────────────────────────────────────────────────────────────
@@ -1357,9 +1596,10 @@ function showToast(msg) {
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     const active = document.querySelector('.tab-panel.active');
-    if (active.id === 'tab-mensal')  calcMensal();
-    if (active.id === 'tab-decimo')  calc13();
+    if (active.id === 'tab-mensal')   calcMensal();
+    if (active.id === 'tab-decimo')   calc13();
     if (active.id === 'tab-comparar') calcCmp();
+    if (active.id === 'tab-plr')      calcPLR();
   }
 });
 
@@ -1369,6 +1609,7 @@ window.addEventListener('load', () => {
   calcMensal();
   calc13();
   calcCmp();
+  calcPLR();
 });
 </script>
 </body>
