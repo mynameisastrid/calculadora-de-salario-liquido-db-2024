@@ -1,639 +1,1375 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Salário Bruto para Líquido e 13º (2025)</title>
-    <style>
-        :root {
-            --cor-fundo: #FFFFFF;
-            --cor-container: #F0F0F0;
-            --cor-texto-principal: #000000;
-            --cor-texto-secundario: #555555;
-            --cor-borda: #CCCCCC;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Salário 2025</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-            --cor-primaria: #000000;
-            --cor-primaria-hover: #333333;
-            --cor-liquido: #000000;
-            --cor-parcial: #333333;
-            --cor-desconto: #AA0000;
-            --cor-fgts: #555555;
-        }
+    :root {
+      --bg: #F7F5F0;
+      --surface: #FFFFFF;
+      --surface2: #F0EDE6;
+      --border: #E2DDD4;
+      --border2: #C8C2B8;
+      --text: #1A1814;
+      --text2: #6B6560;
+      --text3: #9C9690;
+      --accent: #1A1814;
+      --accent-hover: #3D3830;
+      --red: #C0392B;
+      --red-bg: #FDF0EE;
+      --green: #1B6B45;
+      --green-bg: #EBF7F1;
+      --amber: #A0520E;
+      --amber-bg: #FEF6EC;
+      --blue: #1A4F8A;
+      --blue-bg: #EEF4FC;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --transition: 0.18s ease;
+      --font: 'DM Sans', sans-serif;
+      --mono: 'DM Mono', monospace;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--cor-fundo);
-            color: var(--cor-texto-principal);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            transition: background-color 0.5s;
-        }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+      line-height: 1.5;
+    }
 
-        .container {
-            background-color: var(--cor-container);
-            padding: 35px;
-            border-radius: 5px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 580px;
-            border: 1px solid var(--cor-borda);
-            transition: box-shadow 0.5s;
-        }
+    .page-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
 
-        h1 {
-            text-align: center;
-            color: var(--cor-primaria);
-            margin-bottom: 30px;
-            font-size: 2em;
-            text-shadow: none;
-        }
+    .page-header h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
 
-        h2, h3 {
-            color: var(--cor-primaria);
-            border-bottom: 1px solid var(--cor-borda);
-            padding-bottom: 5px;
-        }
-        
-        .tabs {
-            display: flex;
-            margin-bottom: 25px;
-            border-bottom: 2px solid var(--cor-borda);
-        }
+    .page-header p {
+      font-size: 0.875rem;
+      color: var(--text3);
+      margin-top: 4px;
+    }
 
-        .tab-button {
-            padding: 12px 20px;
-            cursor: pointer;
-            border: none;
-            background-color: transparent;
-            font-weight: 600;
-            color: var(--cor-texto-secundario);
-            transition: color 0.3s, border-bottom 0.3s, background-color 0.3s;
-            border-bottom: 3px solid transparent;
-            margin-right: 15px;
-            font-size: 1.05em;
-        }
+    .app {
+      max-width: 680px;
+      margin: 0 auto;
+    }
 
-        .tab-button:hover {
-            color: var(--cor-texto-principal);
-            background-color: #E0E0E0;
-        }
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--surface2);
+      border-radius: var(--radius);
+      padding: 4px;
+      margin-bottom: 1.5rem;
+    }
 
-        .tab-button.active {
-            color: var(--cor-primaria);
-            border-bottom: 3px solid var(--cor-primaria);
-            background-color: #E0E0E0;
-        }
+    .tab-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      font-family: var(--font);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
 
-        .tab-content {
-            display: none;
-        }
+    .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.5); }
 
-        .tab-content.active {
-            display: block;
-        }
+    .tab-btn.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: var(--shadow);
+    }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--cor-texto-secundario);
-        }
+    /* LAYOUT */
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
 
-        input[type="number"], .input-com-checkbox, select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--cor-borda);
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 1em;
-            background-color: #FFFFFF;
-            color: var(--cor-texto-principal);
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
+    @media (max-width: 640px) {
+      .layout { grid-template-columns: 1fr; }
+    }
 
-        input[type="number"]:focus, select:focus {
-            border-color: var(--cor-primaria);
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-            outline: none;
-        }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+    }
 
-        .form-group-checkbox {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            border: 1px solid var(--cor-borda);
-            border-radius: 5px;
-            background-color: #FFFFFF;
-        }
-        
-        .form-group-checkbox label {
-            margin-bottom: 0;
-            margin-left: 10px;
-            font-weight: 400;
-            color: var(--cor-texto-principal);
-        }
-        
-        .form-group-checkbox input[type="checkbox"] {
-            transform: scale(1.3);
-            margin: 0;
-            accent-color: var(--cor-primaria);
-        }
+    .card-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text3);
+      margin-bottom: 1rem;
+    }
 
-        button {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--cor-primaria);
-            color: #FFFFFF;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.2em;
-            font-weight: bold;
-            transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
-            text-transform: uppercase;
-        }
+    /* FORM ELEMENTS */
+    .field { margin-bottom: 1rem; }
+    .field:last-child { margin-bottom: 0; }
 
-        button:hover {
-            background-color: var(--cor-primaria-hover);
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            transform: translateY(-2px);
-        }
+    label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text2);
+      margin-bottom: 5px;
+    }
 
-        .resultado-area {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid var(--cor-borda);
-        }
+    .input-wrap {
+      position: relative;
+    }
 
-        .resultado-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px dashed var(--cor-borda);
-        }
-        
-        .resultado-item span:first-child {
-            color: var(--cor-texto-secundario);
-            max-width: 70%;
-        }
+    .input-prefix {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.875rem;
+      color: var(--text3);
+      pointer-events: none;
+      font-family: var(--mono);
+    }
 
-        .resultado-item.total-descontos {
-            font-weight: bold;
-            color: var(--cor-texto-principal);
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px dashed var(--cor-borda);
-        }
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--mono);
+      font-size: 0.9375rem;
+      color: var(--text);
+      background: var(--surface);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+      -moz-appearance: textfield;
+    }
 
-        .resultado-item.liquido {
-            border-bottom: none;
-            font-size: 1.3em;
-            font-weight: bold;
-            color: var(--cor-liquido);
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 2px solid var(--cor-liquido);
-            box-shadow: none; 
-            border-radius: 5px;
-            padding: 15px;
-        }
-        
-        .resultado-item.liquido.parcial {
-            font-size: 1.1em;
-            font-weight: bold;
-            color: var(--cor-parcial);
-            border-top: 2px solid var(--cor-parcial);
-            box-shadow: none;
-            padding: 10px;
-        }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
-        .resultado-item.fgts {
-            color: var(--cor-fgts);
-            font-weight: normal;
-            font-size: 0.95em;
-        }
-        .resultado-item.fgts.anual {
-            font-weight: bold;
-            margin-top: 5px;
-            padding-top: 5px;
-            border-top: 1px dashed var(--cor-borda);
-        }
+    .has-prefix input[type="text"],
+    .has-prefix input[type="number"] { padding-left: 36px; }
 
-        .desconto {
-            color: var(--cor-desconto);
-            font-weight: bold;
-        }
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(26,24,20,0.08);
+    }
 
-        .alerta {
-            background-color: #F8F8F8; 
-            color: var(--cor-texto-secundario);
-            padding: 12px;
-            border: 1px solid var(--cor-borda);
-            border-radius: 5px;
-            margin-top: 20px;
-            font-size: 0.9em;
-        }
-        
-        .alerta-13 {
-            background-color: #F0F0F0;
-            color: var(--cor-texto-secundario);
-            border-color: var(--cor-borda);
-            font-size: 0.85em;
-        }
-        
-        .resultado-area h2 { color: var(--cor-primaria); }
-        .resultado-area h3[style*="3f7bba"] { color: var(--cor-parcial); } 
-        .resultado-area h3[style*="e44d26"] { color: var(--cor-desconto); } 
-        .resultado-area h3[style*="28a745"] { color: var(--cor-liquido); } 
+    input.error { border-color: var(--red); }
+    input.error:focus { box-shadow: 0 0 0 3px rgba(192,57,43,0.1); }
 
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
-            h1 {
-                font-size: 1.5em;
-            }
-            .resultado-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .resultado-item span:first-child {
-                margin-bottom: 5px;
-            }
-        }
-    </style>
+    .field-error {
+      font-size: 0.75rem;
+      color: var(--red);
+      margin-top: 4px;
+      display: none;
+    }
+
+    .field-error.visible { display: block; }
+
+    /* RANGE SLIDER */
+    .slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: 2px solid var(--surface);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      transition: transform var(--transition);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+    .slider-val {
+      font-family: var(--mono);
+      font-size: 0.8125rem;
+      color: var(--text2);
+      min-width: 80px;
+      text-align: right;
+    }
+
+    /* CHECKBOX */
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .check-row:hover { background: var(--surface2); }
+
+    .check-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .check-row span {
+      font-size: 0.8125rem;
+      color: var(--text2);
+    }
+
+    /* RESULTS */
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+    }
+
+    .result-row:last-of-type { border-bottom: none; }
+
+    .result-label {
+      font-size: 0.8125rem;
+      color: var(--text2);
+      flex: 1;
+    }
+
+    .result-val {
+      font-family: var(--mono);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .result-val.deduction { color: var(--red); }
+    .result-val.positive { color: var(--green); }
+    .result-val.neutral { color: var(--text2); }
+
+    .divider-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 10px 0;
+      border-top: 2px solid var(--border2);
+      margin-top: 4px;
+    }
+
+    .divider-label {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .divider-val {
+      font-family: var(--mono);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--red);
+    }
+
+    /* HERO RESULT */
+    .hero-result {
+      background: var(--accent);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-result .label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.6;
+      margin-bottom: 4px;
+    }
+
+    .hero-result .value {
+      font-family: var(--mono);
+      font-size: 2rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      transition: all 0.2s ease;
+    }
+
+    .hero-result .sub {
+      font-size: 0.75rem;
+      opacity: 0.5;
+      margin-top: 4px;
+    }
+
+    /* METRIC CARDS */
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .metric {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+
+    .metric .m-label {
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text3);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .metric .m-val {
+      font-family: var(--mono);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .metric.red .m-val { color: var(--red); }
+    .metric.green .m-val { color: var(--green); }
+    .metric.amber .m-val { color: var(--amber); }
+
+    /* CHART */
+    .chart-wrap {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 1rem;
+    }
+
+    .chart-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .chart-center .pct {
+      font-family: var(--mono);
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .chart-center .pct-label {
+      font-size: 0.6875rem;
+      color: var(--text3);
+    }
+
+    .legend {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8125rem;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-name { color: var(--text2); flex: 1; }
+
+    .legend-val {
+      font-family: var(--mono);
+      font-size: 0.8125rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* PROGRESS BAR */
+    .progress-section { margin-bottom: 1rem; }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text3);
+      margin-bottom: 6px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .progress-segment {
+      height: 100%;
+      transition: width 0.4s ease;
+    }
+
+    /* FGTS CARD */
+    .fgts-card {
+      background: var(--green-bg);
+      border: 1px solid #C3E6D5;
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .fgts-card .f-label { font-size: 0.8125rem; color: var(--green); }
+    .fgts-card .f-val { font-family: var(--mono); font-size: 0.875rem; font-weight: 600; color: var(--green); }
+
+    /* ACTIONS */
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 1rem;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 9px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border2);
+      background: var(--surface);
+      font-family: var(--font);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all var(--transition);
+      text-align: center;
+    }
+
+    .btn:hover { background: var(--surface2); color: var(--text); border-color: var(--accent); }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover { background: var(--accent-hover); color: #fff; border-color: var(--accent-hover); }
+
+    /* NOTICE */
+    .notice {
+      background: var(--surface2);
+      border-left: 3px solid var(--border2);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 10px 12px;
+      font-size: 0.75rem;
+      color: var(--text3);
+      margin-top: 1rem;
+      line-height: 1.6;
+    }
+
+    /* URL TOAST */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(8px);
+      background: var(--text);
+      color: #fff;
+      padding: 9px 18px;
+      border-radius: 100px;
+      font-size: 0.8125rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      z-index: 9999;
+    }
+
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* PARCEL CARD */
+    .parcel-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .parcel-card {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      text-align: center;
+    }
+
+    .parcel-card .p-label {
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text3);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .parcel-card .p-val {
+      font-family: var(--mono);
+      font-size: 1.0625rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .parcel-card.highlight {
+      background: var(--accent);
+    }
+
+    .parcel-card.highlight .p-label { color: rgba(255,255,255,0.5); }
+    .parcel-card.highlight .p-val { color: #fff; }
+
+    /* COMPARE */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 500px) { .compare-grid { grid-template-columns: 1fr; } }
+
+    .compare-col { display: flex; flex-direction: column; gap: 8px; }
+    .compare-col .card-title { margin-bottom: 0.75rem; }
+
+    /* ANIMATE */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tab-panel.active { animation: fadeIn 0.2s ease; }
+
+    .val-update {
+      animation: highlight 0.3s ease;
+    }
+
+    @keyframes highlight {
+      0% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>💰 Calculadora de Salário e 13º (2025)</h1>
+<div class="page-header">
+  <h1>Calculadora de Salário 2025</h1>
+  <p>CLT · Tabelas INSS e IRRF atualizadas</p>
+</div>
 
-        <div class="tabs">
-            <button class="tab-button active" onclick="openTab('salario', event)">Salário Líquido</button>
-            <button class="tab-button" onclick="openTab('decimoTerceiro', event)">13º Salário</button>
+<div class="app">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('mensal', this)">Salário Mensal</button>
+    <button class="tab-btn" onclick="switchTab('decimo', this)">13º Salário</button>
+    <button class="tab-btn" onclick="switchTab('comparar', this)">Comparar</button>
+  </div>
+
+  <!-- ===== TAB: SALÁRIO MENSAL ===== -->
+  <div id="tab-mensal" class="tab-panel active">
+    <div class="layout">
+      <!-- INPUT COLUMN -->
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="card">
+          <div class="card-title">Dados do salário</div>
+
+          <div class="field">
+            <label for="sal-bruto">Salário bruto mensal</label>
+            <div class="input-wrap has-prefix">
+              <span class="input-prefix">R$</span>
+              <input type="text" id="sal-bruto" value="3.500,00" oninput="onSalInput('sal-bruto','sal-slider'); debouncedCalc();" onblur="formatOnBlur('sal-bruto','sal-slider'); debouncedCalc();" aria-label="Salário bruto mensal em reais">
+            </div>
+            <div class="slider-wrap">
+              <input type="range" id="sal-slider" min="1320" max="30000" step="100" value="3500" oninput="onSliderInput('sal-slider','sal-bruto'); debouncedCalc();" aria-label="Controle deslizante de salário">
+              <span class="slider-val" id="sal-slider-val">R$ 3.500</span>
+            </div>
+            <div class="field-error" id="err-sal-bruto"></div>
+          </div>
+
+          <div class="field">
+            <label for="sal-dep">Dependentes (IRRF)</label>
+            <input type="number" id="sal-dep" value="0" min="0" max="20" step="1" oninput="debouncedCalc()" aria-label="Número de dependentes para IRRF">
+            <div class="field-error" id="err-sal-dep"></div>
+          </div>
+
+          <div class="field">
+            <label>Vale-transporte</label>
+            <label class="check-row" for="sal-vt">
+              <input type="checkbox" id="sal-vt" onchange="debouncedCalc()" aria-label="Descontar vale-transporte de 6%">
+              <span>Descontar VT (6% do bruto)</span>
+            </label>
+          </div>
         </div>
 
-        <div id="salario" class="tab-content active">
-            <div id="calculadoraForm">
-                <div class="form-group">
-                    <label for="salarioBruto">Salário Bruto Mensal (R$):</label>
-                    <input type="number" id="salarioBruto" value="3500.00" min="0" step="0.01">
-                </div>
-
-                <div class="form-group">
-                    <label for="numDependentes">Número de Dependentes (para IRRF):</label>
-                    <input type="number" id="numDependentes" value="0" min="0" step="1">
-                </div>
-                
-                <div class="form-group">
-                    <div class="form-group-checkbox">
-                        <input type="checkbox" id="descontaVT" onchange="calcularSalarioLiquido()" unchecked>
-                        <label for="descontaVT">Desconto de Vale-Transporte (VT) 6%</label>
-                    </div>
-                </div>
-
-                <button onclick="calcularSalarioLiquido()">Calcular Salário Líquido</button>
+        <div class="card">
+          <div class="card-title">Distribuição dos descontos</div>
+          <div class="chart-wrap">
+            <canvas id="chart-mensal"></canvas>
+            <div class="chart-center">
+              <span class="pct" id="chart-pct-mensal">0%</span>
+              <span class="pct-label">descontos</span>
             </div>
-
-            <div class="resultado-area">
-                <h2 style="color: var(--cor-primaria); font-size: 1.3em;">Resumo dos Descontos e Benefícios (CLT - Mensal)</h2>
-                
-                <div class="resultado-item">
-                    <span>INSS (Obrigatório)</span>
-                    <span id="descontoINSS" class="desconto">R$ 0,00</span>
-                </div>
-
-                <div class="resultado-item">
-                    <span>IRRF (Obrigatório)</span>
-                    <span id="descontoIRRF" class="desconto">R$ 0,00</span>
-                </div>
-                
-                <div class="resultado-item">
-                    <span>Vale-Transporte (VT - Máx. 6%)</span>
-                    <span id="descontoVT" class="desconto">R$ 0,00</span>
-                </div>
-
-                <div class="resultado-item">
-                    <span>Base de Cálculo IRRF</span>
-                    <span id="baseIRRF" style="color: var(--cor-texto-principal);">R$ 0,00</span>
-                </div>
-                
-                <div class="resultado-item total-descontos">
-                    <span>Total de Descontos</span>
-                    <span id="totalDescontos" class="desconto">R$ 0,00</span>
-                </div>
-
-                <div class="resultado-item liquido">
-                    <span>Salário Líquido Estimado</span>
-                    <span id="salarioLiquido">R$ 0,00</span>
-                </div>
-
-                <h3 style="color: var(--cor-fgts); font-size: 1.15em; margin-top: 25px; margin-bottom: 10px;">Valores Depositados pelo Empregador</h3>
-                <div class="resultado-item fgts">
-                    <span>FGTS Mensal (8% sobre bruto)</span>
-                    <span id="fgtsMensal">R$ 0,00</span>
-                </div>
-                <div class="resultado-item fgts anual">
-                    <span>FGTS Anual (Estimado)</span>
-                    <span id="fgtsAnual">R$ 0,00</span>
-                </div>
-
-                <div class="alerta">
-                    **Atenção:** Esta é uma simulação. O cálculo final pode variar devido a outros descontos (Plano de Saúde, Empréstimo, etc.). As tabelas de INSS e IRRF podem ser reajustadas pelo Governo. O FGTS é um valor depositado pelo empregador, não descontado do seu salário.
-                </div>
-            </div>
+          </div>
+          <div class="legend" id="legend-mensal"></div>
         </div>
-        
-        <div id="decimoTerceiro" class="tab-content">
-            <div id="calculadora13oForm">
-                   <div class="form-group">
-                    <label for="salarioBruto13">Salário Bruto Base do 13º (R$):</label>
-                    <input type="number" id="salarioBruto13" value="3500.00" min="0" step="0.01">
-                </div>
+      </div>
 
-                <div class="form-group">
-                    <label for="mesesTrabalhados">Meses Trabalhados no Ano (1 a 12):</label>
-                    <input type="number" id="mesesTrabalhados" value="12" min="1" max="12" step="1">
-                </div>
-                
-                <div class="form-group">
-                    <label for="numDependentes13">Número de Dependentes (para IRRF do 13º):</label>
-                    <input type="number" id="numDependentes13" value="0" min="0" step="1">
-                </div>
-
-                <button onclick="calcularDecimoTerceiro()">Calcular 13º Salário</button>
-            </div>
-            
-            <div class="resultado-area">
-                <h2 style="color: var(--cor-fgts); font-size: 1.3em;">Resumo do 13º Salário (2025)</h2>
-                
-                <div class="resultado-item">
-                    <span>Valor Bruto Integral (12/12)</span>
-                    <span id="brutoIntegral13" style="color: var(--cor-texto-principal);">R$ 0,00</span>
-                </div>
-
-                <div class="resultado-item">
-                    <span>Valor Bruto Proporcional</span>
-                    <span id="brutoProporcional13" style="color: var(--cor-texto-principal);">R$ 0,00</span>
-                </div>
-                
-                <h3 style="color: var(--cor-parcial); font-size: 1.15em; margin-top: 15px; margin-bottom: 10px;">1ª Parcela (50% do Valor Bruto Proporcional)</h3>
-                <div class="resultado-item liquido parcial">
-                    <span>Valor da 1ª Parcela (Paga até 30/Nov)</span>
-                    <span id="parcela13_1">R$ 0,00</span>
-                </div>
-
-                <h3 style="color: var(--cor-desconto); font-size: 1.15em; margin-top: 15px; margin-bottom: 10px;">2ª Parcela (Com Descontos - Paga até 20/Dez)</h3>
-                
-                <div class="resultado-item">
-                    <span>Base de Cálculo do 13º (Bruto Proporcional)</span>
-                    <span id="baseCalculo13" style="color: var(--cor-texto-principal);">R$ 0,00</span>
-                </div>
-                
-                <div class="resultado-item">
-                    <span>(-) INSS sobre 13º (Integral)</span>
-                    <span id="descontoINSS13" class="desconto">R$ 0,00</span>
-                </div>
-                
-                    <div class="resultado-item">
-                    <span>(-) IRRF sobre 13º (Integral)</span>
-                    <span id="descontoIRRF13" class="desconto">R$ 0,00</span>
-                </div>
-
-                <div class="resultado-item total-descontos">
-                    <span>Total de Descontos (INSS + IRRF)</span>
-                    <span id="totalDescontos13" class="desconto">R$ 0,00</span>
-                </div>
-
-                <div class="resultado-item liquido">
-                    <span>Valor da 2ª Parcela (Líquido)</span>
-                    <span id="parcela13_2">R$ 0,00</span>
-                </div>
-                
-                <h3 style="color: var(--cor-liquido); font-size: 1.15em; margin-top: 15px; margin-bottom: 10px;">Valor Total Recebido (1ª + 2ª Parcelas Líquidas)</h3>
-                <div class="resultado-item liquido" style="border-top: 2px solid var(--cor-liquido);">
-                    <span>Total Líquido do 13º</span>
-                    <span id="totalLiquido13">R$ 0,00</span>
-                </div>
-
-
-                <div class="alerta alerta-13">
-                    **Nota sobre o 13º:** O INSS e o IRRF são descontados integralmente (sobre o valor bruto total) na **segunda parcela**. O Vale-Transporte (VT) e o FGTS não incidem sobre o 13º.
-                </div>
-            </div>
+      <!-- RESULT COLUMN -->
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="hero-result" aria-live="polite" aria-label="Resultado do salário líquido">
+          <div class="label">Salário líquido estimado</div>
+          <div class="value" id="res-liquido">R$ 0,00</div>
+          <div class="sub" id="res-pct-desc">—</div>
         </div>
+
+        <div class="metrics">
+          <div class="metric red">
+            <div class="m-label">INSS</div>
+            <div class="m-val" id="res-inss">R$ 0,00</div>
+          </div>
+          <div class="metric red">
+            <div class="m-label">IRRF</div>
+            <div class="m-val" id="res-irrf">R$ 0,00</div>
+          </div>
+          <div class="metric red">
+            <div class="m-label">VT</div>
+            <div class="m-val" id="res-vt">R$ 0,00</div>
+          </div>
+          <div class="metric">
+            <div class="m-label">Base IRRF</div>
+            <div class="m-val" id="res-base-irrf">R$ 0,00</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Detalhamento</div>
+
+          <div class="progress-section">
+            <div class="progress-labels">
+              <span>Bruto</span>
+              <span id="prog-label">Líquido</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-segment" id="prog-liquido" style="background:#1A1814;"></div>
+              <div class="progress-segment" id="prog-inss" style="background:#E8544A;"></div>
+              <div class="progress-segment" id="prog-irrf" style="background:#F28B50;"></div>
+              <div class="progress-segment" id="prog-vt" style="background:#F7C56B;"></div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;">
+              <span style="font-size:0.6875rem;color:var(--text3);display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#1A1814;"></span>Líquido</span>
+              <span style="font-size:0.6875rem;color:var(--text3);display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#E8544A;"></span>INSS</span>
+              <span style="font-size:0.6875rem;color:var(--text3);display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#F28B50;"></span>IRRF</span>
+              <span style="font-size:0.6875rem;color:var(--text3);display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#F7C56B;"></span>VT</span>
+            </div>
+          </div>
+
+          <div class="result-row">
+            <span class="result-label">Total de descontos</span>
+            <span class="result-val deduction" id="res-total-desc">R$ 0,00</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">FGTS mensal (empregador)</span>
+            <span class="result-val positive" id="res-fgts-m">R$ 0,00</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">FGTS anual estimado</span>
+            <span class="result-val positive" id="res-fgts-a">R$ 0,00</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" onclick="copyResumo()" aria-label="Copiar resumo do cálculo">Copiar resumo</button>
+          <button class="btn" onclick="shareUrl()" aria-label="Compartilhar cálculo via URL">Compartilhar link</button>
+        </div>
+
+        <div class="notice">
+          Simulação baseada nas tabelas de 2025. Outros descontos (plano de saúde, empréstimos) podem reduzir o valor líquido. O FGTS é depositado pelo empregador e não é descontado do salário.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: 13º ===== -->
+  <div id="tab-decimo" class="tab-panel">
+    <div class="layout">
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="card">
+          <div class="card-title">Dados do 13º</div>
+
+          <div class="field">
+            <label for="d13-bruto">Salário bruto base</label>
+            <div class="input-wrap has-prefix">
+              <span class="input-prefix">R$</span>
+              <input type="text" id="d13-bruto" value="3.500,00" oninput="onSalInput('d13-bruto','d13-slider'); debouncedCalc13();" onblur="formatOnBlur('d13-bruto','d13-slider'); debouncedCalc13();" aria-label="Salário bruto base do 13º">
+            </div>
+            <div class="slider-wrap">
+              <input type="range" id="d13-slider" min="1320" max="30000" step="100" value="3500" oninput="onSliderInput('d13-slider','d13-bruto'); debouncedCalc13();" aria-label="Controle deslizante de salário do 13º">
+              <span class="slider-val" id="d13-slider-val">R$ 3.500</span>
+            </div>
+            <div class="field-error" id="err-d13-bruto"></div>
+          </div>
+
+          <div class="field">
+            <label for="d13-meses">Meses trabalhados no ano</label>
+            <input type="number" id="d13-meses" value="12" min="1" max="12" step="1" oninput="debouncedCalc13()" aria-label="Número de meses trabalhados">
+            <div class="field-error" id="err-d13-meses"></div>
+          </div>
+
+          <div class="field">
+            <label for="d13-dep">Dependentes (IRRF)</label>
+            <input type="number" id="d13-dep" value="0" min="0" max="20" step="1" oninput="debouncedCalc13()" aria-label="Dependentes para IRRF do 13º">
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Composição dos descontos</div>
+          <div class="chart-wrap">
+            <canvas id="chart-decimo"></canvas>
+            <div class="chart-center">
+              <span class="pct" id="chart-pct-decimo">0%</span>
+              <span class="pct-label">descontos</span>
+            </div>
+          </div>
+          <div class="legend" id="legend-decimo"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="hero-result" aria-live="polite">
+          <div class="label">Total líquido do 13º</div>
+          <div class="value" id="d13-total-liq">R$ 0,00</div>
+          <div class="sub" id="d13-sub">—</div>
+        </div>
+
+        <div class="parcel-row">
+          <div class="parcel-card">
+            <div class="p-label">1ª parcela</div>
+            <div class="p-val" id="d13-p1">R$ 0,00</div>
+          </div>
+          <div class="parcel-card highlight">
+            <div class="p-label">2ª parcela</div>
+            <div class="p-val" id="d13-p2">R$ 0,00</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Detalhamento</div>
+          <div class="result-row">
+            <span class="result-label">Valor bruto integral (12/12)</span>
+            <span class="result-val" id="d13-bruto-int">R$ 0,00</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Valor bruto proporcional</span>
+            <span class="result-val" id="d13-bruto-prop">R$ 0,00</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">(-) INSS sobre 13º</span>
+            <span class="result-val deduction" id="d13-inss">R$ 0,00</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">(-) IRRF sobre 13º</span>
+            <span class="result-val deduction" id="d13-irrf">R$ 0,00</span>
+          </div>
+          <div class="divider-row">
+            <span class="divider-label">Total de descontos</span>
+            <span class="divider-val" id="d13-total-desc">R$ 0,00</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" onclick="copyResumo13()">Copiar resumo</button>
+          <button class="btn" onclick="shareUrl()">Compartilhar link</button>
+        </div>
+
+        <div class="notice">
+          O INSS e o IRRF são descontados integralmente na 2ª parcela. VT e FGTS não incidem sobre o 13º salário.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: COMPARAR ===== -->
+  <div id="tab-comparar" class="tab-panel">
+    <div class="compare-grid">
+      <div class="compare-col">
+        <div class="card">
+          <div class="card-title">Cenário A</div>
+          <div class="field">
+            <label for="cmp-a-bruto">Salário bruto</label>
+            <div class="input-wrap has-prefix">
+              <span class="input-prefix">R$</span>
+              <input type="text" id="cmp-a-bruto" value="3.500,00" oninput="onSalInput('cmp-a-bruto',null); debouncedCalcCmp();" onblur="formatOnBlur('cmp-a-bruto',null); debouncedCalcCmp();" aria-label="Salário bruto cenário A">
+            </div>
+          </div>
+          <div class="field">
+            <label for="cmp-a-dep">Dependentes</label>
+            <input type="number" id="cmp-a-dep" value="0" min="0" max="20" oninput="debouncedCalcCmp()">
+          </div>
+          <div class="field">
+            <label class="check-row" for="cmp-a-vt">
+              <input type="checkbox" id="cmp-a-vt" onchange="debouncedCalcCmp()">
+              <span>Com VT (6%)</span>
+            </label>
+          </div>
+        </div>
+        <div class="card" id="cmp-a-result">
+          <div class="card-title">Resultado A</div>
+          <div class="result-row"><span class="result-label">Líquido</span><span class="result-val positive" id="cmp-a-liq">—</span></div>
+          <div class="result-row"><span class="result-label">INSS</span><span class="result-val deduction" id="cmp-a-inss">—</span></div>
+          <div class="result-row"><span class="result-label">IRRF</span><span class="result-val deduction" id="cmp-a-irrf">—</span></div>
+          <div class="result-row"><span class="result-label">Total desc.</span><span class="result-val deduction" id="cmp-a-desc">—</span></div>
+          <div class="result-row"><span class="result-label">FGTS mensal</span><span class="result-val positive" id="cmp-a-fgts">—</span></div>
+        </div>
+      </div>
+
+      <div class="compare-col">
+        <div class="card">
+          <div class="card-title">Cenário B</div>
+          <div class="field">
+            <label for="cmp-b-bruto">Salário bruto</label>
+            <div class="input-wrap has-prefix">
+              <span class="input-prefix">R$</span>
+              <input type="text" id="cmp-b-bruto" value="5.000,00" oninput="onSalInput('cmp-b-bruto',null); debouncedCalcCmp();" onblur="formatOnBlur('cmp-b-bruto',null); debouncedCalcCmp();" aria-label="Salário bruto cenário B">
+            </div>
+          </div>
+          <div class="field">
+            <label for="cmp-b-dep">Dependentes</label>
+            <input type="number" id="cmp-b-dep" value="0" min="0" max="20" oninput="debouncedCalcCmp()">
+          </div>
+          <div class="field">
+            <label class="check-row" for="cmp-b-vt">
+              <input type="checkbox" id="cmp-b-vt" onchange="debouncedCalcCmp()">
+              <span>Com VT (6%)</span>
+            </label>
+          </div>
+        </div>
+        <div class="card" id="cmp-b-result">
+          <div class="card-title">Resultado B</div>
+          <div class="result-row"><span class="result-label">Líquido</span><span class="result-val positive" id="cmp-b-liq">—</span></div>
+          <div class="result-row"><span class="result-label">INSS</span><span class="result-val deduction" id="cmp-b-inss">—</span></div>
+          <div class="result-row"><span class="result-label">IRRF</span><span class="result-val deduction" id="cmp-b-irrf">—</span></div>
+          <div class="result-row"><span class="result-label">Total desc.</span><span class="result-val deduction" id="cmp-b-desc">—</span></div>
+          <div class="result-row"><span class="result-label">FGTS mensal</span><span class="result-val positive" id="cmp-b-fgts">—</span></div>
+        </div>
+      </div>
     </div>
 
-    <script>
-        const TETO_INSS = 8157.41;
-        const DESCONTO_MAX_INSS = 951.62;
-        const TABELA_INSS = [
-            { limite: 1518.00, aliquota: 0.075, deducao: 0.00 },
-            { limite: 2793.88, aliquota: 0.09, deducao: 22.77 },
-            { limite: 4190.83, aliquota: 0.12, deducao: 106.59 },
-            { limite: TETO_INSS, aliquota: 0.14, deducao: 190.40 } 
-        ];
+    <div class="card" id="cmp-delta" style="margin-top:1rem;display:none;">
+      <div class="card-title">Delta (B − A)</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;">
+        <div class="metric" id="delta-liq-card">
+          <div class="m-label">Líquido a mais</div>
+          <div class="m-val" id="delta-liq">—</div>
+        </div>
+        <div class="metric" id="delta-desc-card">
+          <div class="m-label">Descontos a mais</div>
+          <div class="m-val" id="delta-desc">—</div>
+        </div>
+        <div class="metric" id="delta-pct-card">
+          <div class="m-label">% líquido a mais</div>
+          <div class="m-val" id="delta-pct">—</div>
+        </div>
+      </div>
+    </div>
 
-        const DEDUCAO_POR_DEPENDENTE = 189.59;
-        const TABELA_IRRF = [
-            { limite: 2428.80, aliquota: 0.00, deducao: 0.00 },
-            { limite: 2826.65, aliquota: 0.075, deducao: 182.16 },
-            { limite: 3751.05, aliquota: 0.15, deducao: 394.16 },
-            { limite: 4664.68, aliquota: 0.225, deducao: 675.49 },
-            { limite: Infinity, aliquota: 0.275, deducao: 908.73 } 
-        ];
+    <div class="notice" style="margin-top:1rem;">
+      Compare dois cenários salariais para visualizar o impacto real dos descontos sobre cada faixa.
+    </div>
+  </div>
+</div>
 
-        const ALIQUOTA_VT = 0.06;
-        const ALIQUOTA_FGTS = 0.08;
+<div class="toast" id="toast"></div>
 
-        function calcularINSS(salarioBruto) {
-            if (salarioBruto <= 0) return 0;
-            if (salarioBruto > TETO_INSS) return DESCONTO_MAX_INSS;
+<script>
+// ─── CONFIGURAÇÃO CENTRALIZADA 2025 ──────────────────────────────────────────
+const CFG = {
+  ano: 2025,
+  inss: {
+    teto: 8157.41,
+    maxDesconto: 951.62,
+    faixas: [
+      { ate: 1518.00,  aliq: 0.075, ded: 0.00  },
+      { ate: 2793.88,  aliq: 0.09,  ded: 22.77 },
+      { ate: 4190.83,  aliq: 0.12,  ded: 106.59 },
+      { ate: 8157.41,  aliq: 0.14,  ded: 190.40 }
+    ]
+  },
+  irrf: {
+    deducaoDep: 189.59,
+    faixas: [
+      { ate: 2428.80,  aliq: 0.000, ded: 0.00    },
+      { ate: 2826.65,  aliq: 0.075, ded: 182.16  },
+      { ate: 3751.05,  aliq: 0.15,  ded: 394.16  },
+      { ate: 4664.68,  aliq: 0.225, ded: 675.49  },
+      { ate: Infinity, aliq: 0.275, ded: 908.73  }
+    ]
+  },
+  vtAliq: 0.06,
+  fgtsAliq: 0.08
+};
 
-            for (let i = 0; i < TABELA_INSS.length; i++) {
-                const faixa = TABELA_INSS[i];
-                if (salarioBruto <= faixa.limite) {
-                    return (salarioBruto * faixa.aliquota) - faixa.deducao;
-                }
-            }
-            return DESCONTO_MAX_INSS;
-        }
+// ─── CÁLCULOS ────────────────────────────────────────────────────────────────
+function calcINSS(bruto) {
+  if (bruto <= 0) return 0;
+  if (bruto > CFG.inss.teto) return CFG.inss.maxDesconto;
+  for (const f of CFG.inss.faixas) {
+    if (bruto <= f.ate) return Math.max(0, bruto * f.aliq - f.ded);
+  }
+  return CFG.inss.maxDesconto;
+}
 
-        function calcularIRRF(baseCalculoIRRF) {
-            if (baseCalculoIRRF <= 0) return 0;
+function calcIRRF(base) {
+  if (base <= 0) return 0;
+  for (const f of CFG.irrf.faixas) {
+    if (base <= f.ate) return Math.max(0, base * f.aliq - f.ded);
+  }
+  return 0;
+}
 
-            for (let i = 0; i < TABELA_IRRF.length; i++) {
-                const faixa = TABELA_IRRF[i];
-                if (baseCalculoIRRF <= faixa.limite) {
-                    let irrf = (baseCalculoIRRF * faixa.aliquota) - faixa.deducao;
-                    return Math.max(0, irrf);
-                }
-            }
-            const ultimaFaixa = TABELA_IRRF[TABELA_IRRF.length - 1];
-            let irrf = (baseCalculoIRRF * ultimaFaixa.aliquota) - ultimaFaixa.deducao;
-            return Math.max(0, irrf);
-        }
+function calcSalario(bruto, dep, vt) {
+  const inss   = calcINSS(bruto);
+  const vtVal  = vt ? bruto * CFG.vtAliq : 0;
+  const baseIR = Math.max(0, bruto - inss - dep * CFG.irrf.deducaoDep);
+  const irrf   = calcIRRF(baseIR);
+  const total  = inss + irrf + vtVal;
+  const liq    = bruto - total;
+  const fgts   = bruto * CFG.fgtsAliq;
+  return { inss, irrf, vtVal, baseIR, total, liq, fgts };
+}
 
-        function calcularVT(salarioBruto, descontar) {
-            if (!descontar || salarioBruto <= 0) return 0;
-            return salarioBruto * ALIQUOTA_VT;
-        }
+function calcDecimo(bruto, meses, dep) {
+  meses = Math.min(12, Math.max(1, meses));
+  const prop  = (bruto / 12) * meses;
+  const p1    = prop * 0.5;
+  const inss  = calcINSS(prop);
+  const baseIR = Math.max(0, prop - inss - dep * CFG.irrf.deducaoDep);
+  const irrf  = calcIRRF(baseIR);
+  const total = inss + irrf;
+  const p2    = prop - total - p1;
+  return { brutoInt: bruto, prop, p1, inss, irrf, total, p2, liq: p1 + p2 };
+}
 
-        function calcularFGTS(salarioBruto) {
-            if (salarioBruto <= 0) return 0;
-            return salarioBruto * ALIQUOTA_FGTS;
-        }
+// ─── FORMATAÇÃO BRL ───────────────────────────────────────────────────────────
+function fmt(v) {
+  v = Math.round(v * 100) / 100;
+  return 'R$ ' + v.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
 
-        function formatarMoeda(valor) {
-            valor = Math.round(valor * 100) / 100;
-            return `R$ ${valor.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}`;
-        }
-        
-        function calcularSalarioLiquido() {
-            const salarioBruto = parseFloat(document.getElementById('salarioBruto').value) || 0;
-            const numDependentes = parseInt(document.getElementById('numDependentes').value) || 0;
-            const descontarVT = document.getElementById('descontaVT').checked;
+function fmtPct(v) {
+  return v.toFixed(1).replace('.', ',') + '%';
+}
 
-            if (salarioBruto <= 0) {
-                const zero = formatarMoeda(0);
-                document.getElementById('descontoINSS').textContent = zero;
-                document.getElementById('descontoIRRF').textContent = zero;
-                document.getElementById('descontoVT').textContent = zero;
-                document.getElementById('baseIRRF').textContent = zero;
-                document.getElementById('totalDescontos').textContent = zero;
-                document.getElementById('salarioLiquido').textContent = zero;
-                document.getElementById('fgtsMensal').textContent = zero;
-                document.getElementById('fgtsAnual').textContent = zero;
-                return;
-            }
+// Converte string BRL ("3.500,00" ou "3500,00" ou "3500.00") para número
+function parseBRL(str) {
+  if (!str) return 0;
+  str = str.trim();
+  // Remove pontos de milhar, troca vírgula por ponto
+  str = str.replace(/\./g, '').replace(',', '.');
+  return parseFloat(str) || 0;
+}
 
-            const descontoINSS = calcularINSS(salarioBruto);
+// Formata número para string BRL com pontos e vírgula
+function toBRL(num) {
+  return num.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
 
-            const descontoVT = calcularVT(salarioBruto, descontarVT);
+// Máscara de moeda: aplica formatação enquanto o usuário digita
+function onSalInput(inputId, sliderId) {
+  const el = document.getElementById(inputId);
+  let raw = el.value.replace(/[^\d,]/g, ''); // só dígitos e vírgula
+  // Normaliza: se não tem vírgula trata como inteiro
+  let num = parseBRL(raw);
+  if (sliderId) {
+    const sl = document.getElementById(sliderId);
+    if (num >= +sl.min && num <= +sl.max) {
+      sl.value = num;
+      document.getElementById(sliderId + '-val').textContent = 'R$ ' +
+        Math.round(num).toLocaleString('pt-BR');
+    }
+  }
+  clearError(inputId);
+}
 
-            const deducaoDependentes = numDependentes * DEDUCAO_POR_DEPENDENTE;
-            const baseIRRF = salarioBruto - descontoINSS - deducaoDependentes;
-            
-            const descontoIRRF = calcularIRRF(baseIRRF);
+function formatOnBlur(inputId, sliderId) {
+  const el = document.getElementById(inputId);
+  let num = parseBRL(el.value);
+  if (num < 0) num = 0;
+  el.value = toBRL(num);
+  if (sliderId) {
+    const sl = document.getElementById(sliderId);
+    const clamped = Math.min(Math.max(num, +sl.min), +sl.max);
+    sl.value = clamped;
+    document.getElementById(sliderId + '-val').textContent = 'R$ ' +
+      Math.round(num).toLocaleString('pt-BR');
+  }
+}
 
-            const totalDescontos = descontoINSS + descontoIRRF + descontoVT;
-            const salarioLiquido = salarioBruto - totalDescontos;
+function onSliderInput(sliderId, inputId) {
+  const sl = document.getElementById(sliderId);
+  const v = +sl.value;
+  document.getElementById(sliderId + '-val').textContent = 'R$ ' + v.toLocaleString('pt-BR');
+  document.getElementById(inputId).value = toBRL(v);
+}
 
-            const fgtsMensal = calcularFGTS(salarioBruto);
-            const fgtsAnual = fgtsMensal * 12;
+// ─── VALIDAÇÃO ────────────────────────────────────────────────────────────────
+function showError(id, msg) {
+  const inp = document.getElementById(id);
+  const err = document.getElementById('err-' + id);
+  if (inp) inp.classList.add('error');
+  if (err) { err.textContent = msg; err.classList.add('visible'); }
+}
 
-            document.getElementById('descontoINSS').textContent = formatarMoeda(descontoINSS);
-            document.getElementById('descontoIRRF').textContent = formatarMoeda(descontoIRRF);
-            document.getElementById('descontoVT').textContent = formatarMoeda(descontoVT);
-            document.getElementById('baseIRRF').textContent = formatarMoeda(Math.max(0, baseIRRF));
-            document.getElementById('totalDescontos').textContent = formatarMoeda(totalDescontos);
-            document.getElementById('salarioLiquido').textContent = formatarMoeda(salarioLiquido);
-            
-            document.getElementById('fgtsMensal').textContent = formatarMoeda(fgtsMensal);
-            document.getElementById('fgtsAnual').textContent = formatarMoeda(fgtsAnual);
-        }
+function clearError(id) {
+  const inp = document.getElementById(id);
+  const err = document.getElementById('err-' + id);
+  if (inp) inp.classList.remove('error');
+  if (err) err.classList.remove('visible');
+}
 
-        function calcularDecimoTerceiro() {
-            const salarioBruto = parseFloat(document.getElementById('salarioBruto13').value) || 0;
-            let mesesTrabalhados = parseInt(document.getElementById('mesesTrabalhados').value) || 0;
-            const numDependentes = parseInt(document.getElementById('numDependentes13').value) || 0;
+function validateSalario(inputId) {
+  const v = parseBRL(document.getElementById(inputId).value);
+  if (isNaN(v) || v <= 0) {
+    showError(inputId, 'Informe um salário maior que zero.');
+    return false;
+  }
+  if (v > 500000) {
+    showError(inputId, 'Valor muito alto. Verifique o salário informado.');
+    return false;
+  }
+  clearError(inputId);
+  return true;
+}
 
-            mesesTrabalhados = Math.min(Math.max(1, mesesTrabalhados), 12);
+function validateDep(inputId) {
+  const v = parseInt(document.getElementById(inputId).value);
+  if (isNaN(v) || v < 0 || v > 20) {
+    showError(inputId, 'Informe entre 0 e 20 dependentes.');
+    return false;
+  }
+  clearError(inputId);
+  return true;
+}
 
-            if (salarioBruto <= 0) {
-                const zero = formatarMoeda(0);
-                document.getElementById('brutoIntegral13').textContent = zero;
-                document.getElementById('brutoProporcional13').textContent = zero;
-                document.getElementById('parcela13_1').textContent = zero;
-                document.getElementById('baseCalculo13').textContent = zero;
-                document.getElementById('descontoINSS13').textContent = zero;
-                document.getElementById('descontoIRRF13').textContent = zero;
-                document.getElementById('totalDescontos13').textContent = zero;
-                document.getElementById('parcela13_2').textContent = zero;
-                document.getElementById('totalLiquido13').textContent = zero;
-                return;
-            }
+// ─── CHARTS ──────────────────────────────────────────────────────────────────
+const COLORS = { liq: '#1A1814', inss: '#E8544A', irrf: '#F28B50', vt: '#F7C56B', fgts: '#5BA08A' };
+let chartMensal = null;
+let chartDecimo = null;
 
-            const brutoIntegral = salarioBruto;
-            const brutoProporcional = (salarioBruto / 12) * mesesTrabalhados;
-            
-            const parcela1 = brutoProporcional * 0.5;
+function buildChart(canvasId, labels, values, colors) {
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  if (canvasId === 'chart-mensal' && chartMensal) { chartMensal.destroy(); }
+  if (canvasId === 'chart-decimo' && chartDecimo) { chartDecimo.destroy(); }
+  const c = new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: '#fff', hoverBorderWidth: 3 }] },
+    options: {
+      cutout: '72%',
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: (ctx) => ' ' + fmt(ctx.raw) + ' (' + fmtPct(ctx.raw / ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0) * 100) + ')' }
+      }},
+      animation: { duration: 350 }
+    }
+  });
+  if (canvasId === 'chart-mensal') chartMensal = c;
+  else chartDecimo = c;
+  return c;
+}
 
-            const descontoINSS = calcularINSS(brutoProporcional);
+function updateLegend(legendId, items) {
+  const el = document.getElementById(legendId);
+  el.innerHTML = items.map(i => `
+    <div class="legend-item">
+      <span class="legend-dot" style="background:${i.color}"></span>
+      <span class="legend-name">${i.label}</span>
+      <span class="legend-val">${fmt(i.val)}</span>
+    </div>`).join('');
+}
 
-            const deducaoDependentes = numDependentes * DEDUCAO_POR_DEPENDENTE;
-            const baseIRRF = brutoProporcional - descontoINSS - deducaoDependentes;
-            
-            const descontoIRRF = calcularIRRF(baseIRRF);
+// ─── CALC MENSAL ──────────────────────────────────────────────────────────────
+function calcMensal() {
+  if (!validateSalario('sal-bruto')) return;
+  if (!validateDep('sal-dep')) return;
 
-            const totalDescontos = descontoINSS + descontoIRRF;
+  const bruto = parseBRL(document.getElementById('sal-bruto').value);
+  const dep   = parseInt(document.getElementById('sal-dep').value) || 0;
+  const vt    = document.getElementById('sal-vt').checked;
+  const r     = calcSalario(bruto, dep, vt);
+  const pctDesc = (r.total / bruto) * 100;
 
-            const parcela2 = brutoProporcional - totalDescontos - parcela1;
-            
-            const totalLiquido = parcela1 + parcela2;
+  setVal('res-liquido', fmt(r.liq));
+  setVal('res-pct-desc', fmtPct(pctDesc) + ' de desconto sobre o bruto');
+  setVal('res-inss', fmt(r.inss));
+  setVal('res-irrf', fmt(r.irrf));
+  setVal('res-vt', fmt(r.vtVal));
+  setVal('res-base-irrf', fmt(r.baseIR));
+  setVal('res-total-desc', fmt(r.total));
+  setVal('res-fgts-m', fmt(r.fgts));
+  setVal('res-fgts-a', fmt(r.fgts * 12));
+  setVal('prog-label', fmt(r.liq));
 
-            document.getElementById('brutoIntegral13').textContent = formatarMoeda(brutoIntegral);
-            document.getElementById('brutoProporcional13').textContent = formatarMoeda(brutoProporcional);
-            document.getElementById('parcela13_1').textContent = formatarMoeda(parcela1);
-            
-            document.getElementById('baseCalculo13').textContent = formatarMoeda(brutoProporcional);
-            document.getElementById('descontoINSS13').textContent = formatarMoeda(descontoINSS);
-            document.getElementById('descontoIRRF13').textContent = formatarMoeda(descontoIRRF);
-            document.getElementById('totalDescontos13').textContent = formatarMoeda(totalDescontos);
-            document.getElementById('parcela13_2').textContent = formatarMoeda(parcela2);
-            document.getElementById('totalLiquido13').textContent = formatarMoeda(totalLiquido);
-        }
+  // Progress bar
+  const pLiq  = (r.liq   / bruto) * 100;
+  const pInss = (r.inss  / bruto) * 100;
+  const pIrrf = (r.irrf  / bruto) * 100;
+  const pVt   = (r.vtVal / bruto) * 100;
+  document.getElementById('prog-liquido').style.width = pLiq  + '%';
+  document.getElementById('prog-inss').style.width    = pInss + '%';
+  document.getElementById('prog-irrf').style.width    = pIrrf + '%';
+  document.getElementById('prog-vt').style.width      = pVt   + '%';
 
-        function openTab(tabName, event) {
-            const tabContents = document.getElementsByClassName('tab-content');
-            for (let i = 0; i < tabContents.length; i++) {
-                tabContents[i].style.display = 'none';
-                tabContents[i].classList.remove('active');
-            }
+  // Chart
+  const items = [
+    { label: 'Líquido', val: r.liq,    color: COLORS.liq  },
+    { label: 'INSS',    val: r.inss,   color: COLORS.inss },
+    { label: 'IRRF',    val: r.irrf,   color: COLORS.irrf },
+  ];
+  if (r.vtVal > 0) items.push({ label: 'VT', val: r.vtVal, color: COLORS.vt });
+  buildChart('chart-mensal', items.map(i=>i.label), items.map(i=>i.val), items.map(i=>i.color));
+  updateLegend('legend-mensal', items);
+  document.getElementById('chart-pct-mensal').textContent = fmtPct(pctDesc);
+}
 
-            const tabButtons = document.getElementsByClassName('tab-button');
-            for (let i = 0; i < tabButtons.length; i++) {
-                tabButtons[i].classList.remove('active');
-            }
+// ─── CALC 13º ─────────────────────────────────────────────────────────────────
+function calc13() {
+  if (!validateSalario('d13-bruto')) return;
 
-            document.getElementById(tabName).style.display = 'block';
-            document.getElementById(tabName).classList.add('active');
-            event.currentTarget.classList.add('active');
-            
-            if (tabName === 'decimoTerceiro') {
-                calcularDecimoTerceiro();
-            } else {
-                calcularSalarioLiquido();
-            }
-        }
+  const bruto = parseBRL(document.getElementById('d13-bruto').value);
+  const meses = parseInt(document.getElementById('d13-meses').value) || 12;
+  const dep   = parseInt(document.getElementById('d13-dep').value) || 0;
+  const r     = calcDecimo(bruto, meses, dep);
+  const pct   = (r.total / r.prop) * 100;
 
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const activeTab = document.querySelector('.tab-content.active');
-                if (activeTab.id === 'salario') {
-                    calcularSalarioLiquido();
-                } else if (activeTab.id === 'decimoTerceiro') {
-                    calcularDecimoTerceiro();
-                }
-            }
-        });
+  setVal('d13-total-liq', fmt(r.liq));
+  setVal('d13-sub', `${meses}/12 meses · ${fmtPct(pct)} de desconto`);
+  setVal('d13-p1', fmt(r.p1));
+  setVal('d13-p2', fmt(r.p2));
+  setVal('d13-bruto-int', fmt(r.brutoInt));
+  setVal('d13-bruto-prop', fmt(r.prop));
+  setVal('d13-inss', fmt(r.inss));
+  setVal('d13-irrf', fmt(r.irrf));
+  setVal('d13-total-desc', fmt(r.total));
 
-        window.onload = () => {
-            document.getElementById('decimoTerceiro').style.display = 'none';
-            document.getElementById('salario').style.display = 'block';
-            document.querySelector('.tab-button').classList.add('active');
-            calcularSalarioLiquido();
-            calcularDecimoTerceiro();
-        };
+  const items = [
+    { label: 'Líquido', val: r.liq,   color: COLORS.liq  },
+    { label: 'INSS',    val: r.inss,  color: COLORS.inss },
+    { label: 'IRRF',    val: r.irrf,  color: COLORS.irrf },
+  ];
+  buildChart('chart-decimo', items.map(i=>i.label), items.map(i=>i.val), items.map(i=>i.color));
+  updateLegend('legend-decimo', items);
+  document.getElementById('chart-pct-decimo').textContent = fmtPct(pct);
+}
 
-    </script>
+// ─── CALC COMPARAR ────────────────────────────────────────────────────────────
+function calcCmp() {
+  const bruA = parseBRL(document.getElementById('cmp-a-bruto').value);
+  const bruB = parseBRL(document.getElementById('cmp-b-bruto').value);
+  const depA = parseInt(document.getElementById('cmp-a-dep').value) || 0;
+  const depB = parseInt(document.getElementById('cmp-b-dep').value) || 0;
+  const vtA  = document.getElementById('cmp-a-vt').checked;
+  const vtB  = document.getElementById('cmp-b-vt').checked;
+
+  if (bruA <= 0 || bruB <= 0) return;
+
+  const rA = calcSalario(bruA, depA, vtA);
+  const rB = calcSalario(bruB, depB, vtB);
+
+  setVal('cmp-a-liq',  fmt(rA.liq));
+  setVal('cmp-a-inss', fmt(rA.inss));
+  setVal('cmp-a-irrf', fmt(rA.irrf));
+  setVal('cmp-a-desc', fmt(rA.total));
+  setVal('cmp-a-fgts', fmt(rA.fgts));
+
+  setVal('cmp-b-liq',  fmt(rB.liq));
+  setVal('cmp-b-inss', fmt(rB.inss));
+  setVal('cmp-b-irrf', fmt(rB.irrf));
+  setVal('cmp-b-desc', fmt(rB.total));
+  setVal('cmp-b-fgts', fmt(rB.fgts));
+
+  const dEl = document.getElementById('cmp-delta');
+  dEl.style.display = 'block';
+  const dLiq  = rB.liq   - rA.liq;
+  const dDesc = rB.total - rA.total;
+  const dPct  = ((rB.liq - rA.liq) / rA.liq) * 100;
+
+  setVal('delta-liq',  (dLiq  >= 0 ? '+' : '') + fmt(dLiq));
+  setVal('delta-desc', (dDesc >= 0 ? '+' : '') + fmt(dDesc));
+  setVal('delta-pct',  (dPct  >= 0 ? '+' : '') + fmtPct(dPct));
+
+  ['delta-liq-card','delta-desc-card','delta-pct-card'].forEach(id => {
+    document.getElementById(id).className = 'metric ' + (dLiq >= 0 ? 'green' : 'red');
+  });
+}
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function setVal(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (el.textContent !== val) {
+    el.textContent = val;
+    el.classList.remove('val-update');
+    void el.offsetWidth;
+    el.classList.add('val-update');
+  }
+}
+
+function debounce(fn, ms) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
+const debouncedCalc    = debounce(calcMensal, 220);
+const debouncedCalc13  = debounce(calc13, 220);
+const debouncedCalcCmp = debounce(calcCmp, 220);
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'decimo')  setTimeout(calc13, 50);
+  if (name === 'comparar') setTimeout(calcCmp, 50);
+}
+
+// ─── COPIAR RESUMO ────────────────────────────────────────────────────────────
+function copyResumo() {
+  const bruto = document.getElementById('sal-bruto').value;
+  const liq   = document.getElementById('res-liquido').textContent;
+  const inss  = document.getElementById('res-inss').textContent;
+  const irrf  = document.getElementById('res-irrf').textContent;
+  const desc  = document.getElementById('res-total-desc').textContent;
+  const fgts  = document.getElementById('res-fgts-m').textContent;
+  const txt = `📊 Simulação de Salário 2025\n\nBruto: R$ ${bruto}\nINSS: ${inss}\nIRRF: ${irrf}\nTotal de descontos: ${desc}\n\n💰 Líquido: ${liq}\n📦 FGTS mensal (empregador): ${fgts}`;
+  navigator.clipboard.writeText(txt).then(() => showToast('Resumo copiado!')).catch(() => showToast('Não foi possível copiar.'));
+}
+
+function copyResumo13() {
+  const liq  = document.getElementById('d13-total-liq').textContent;
+  const p1   = document.getElementById('d13-p1').textContent;
+  const p2   = document.getElementById('d13-p2').textContent;
+  const txt  = `📊 Simulação 13º Salário 2025\n\n1ª parcela: ${p1}\n2ª parcela: ${p2}\n\n💰 Total líquido: ${liq}`;
+  navigator.clipboard.writeText(txt).then(() => showToast('Resumo copiado!')).catch(() => showToast('Não foi possível copiar.'));
+}
+
+// ─── SHARE URL ────────────────────────────────────────────────────────────────
+function shareUrl() {
+  const p = new URLSearchParams({
+    sal:  parseBRL(document.getElementById('sal-bruto').value),
+    dep:  document.getElementById('sal-dep').value,
+    vt:   document.getElementById('sal-vt').checked ? '1' : '0',
+    d13:  parseBRL(document.getElementById('d13-bruto').value),
+    mes:  document.getElementById('d13-meses').value,
+    dep13: document.getElementById('d13-dep').value
+  });
+  const url = location.href.split('?')[0] + '?' + p.toString();
+  navigator.clipboard.writeText(url).then(() => showToast('Link copiado!')).catch(() => showToast('Não foi possível copiar.'));
+}
+
+function loadFromUrl() {
+  const p = new URLSearchParams(location.search);
+  if (p.get('sal')) {
+    document.getElementById('sal-bruto').value = toBRL(+p.get('sal'));
+    document.getElementById('sal-slider').value = +p.get('sal');
+    document.getElementById('sal-slider-val').textContent = 'R$ ' + Math.round(+p.get('sal')).toLocaleString('pt-BR');
+  }
+  if (p.get('dep'))  document.getElementById('sal-dep').value  = p.get('dep');
+  if (p.get('vt'))   document.getElementById('sal-vt').checked = p.get('vt') === '1';
+  if (p.get('d13')) {
+    document.getElementById('d13-bruto').value = toBRL(+p.get('d13'));
+    document.getElementById('d13-slider').value = +p.get('d13');
+    document.getElementById('d13-slider-val').textContent = 'R$ ' + Math.round(+p.get('d13')).toLocaleString('pt-BR');
+  }
+  if (p.get('mes'))   document.getElementById('d13-meses').value = p.get('mes');
+  if (p.get('dep13')) document.getElementById('d13-dep').value   = p.get('dep13');
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ─── KEYBOARD ─────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const active = document.querySelector('.tab-panel.active');
+    if (active.id === 'tab-mensal')  calcMensal();
+    if (active.id === 'tab-decimo')  calc13();
+    if (active.id === 'tab-comparar') calcCmp();
+  }
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  loadFromUrl();
+  calcMensal();
+  calc13();
+  calcCmp();
+});
+</script>
 </body>
 </html>
