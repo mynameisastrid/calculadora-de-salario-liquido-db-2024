@@ -1,67 +1,60 @@
-# 💰 Calculadora de Salário Líquido e 13º Salário (CLT - Brasil 2025) || Live @ https://calculasalarioliquido.netlify.app/
+Calculadora de Salário 2025
+Esta aplicação é uma ferramenta estática baseada em tecnologias web (HTML, CSS e JavaScript) projetada para fornecer simulações precisas de remuneração sob o regime CLT (Consolidação das Leis do Trabalho) para o ano de 2025. A ferramenta utiliza as tabelas vigentes de INSS, IRRF e as regras específicas de PLR conforme a legislação brasileira atualizada.
 
-Este é um projeto de simulação de cálculos trabalhistas (CLT) desenvolvido em **HTML, CSS e JavaScript Vanilla**.
+Módulos Funcionais
+O sistema é dividido em quatro áreas principais de operação, acessíveis por meio de um sistema de abas:
 
-O objetivo é fornecer uma ferramenta de alto contraste e fácil utilização para estimar o **Salário Líquido Mensal** e o **13º Salário**, com base nas tabelas de descontos projetadas para o ano de **2025** no Brasil.
+1. Salário Mensal
+Realiza o cálculo detalhado do salário líquido a partir do valor bruto.
 
----
+Entradas: Salário bruto, número de dependentes e opção de desconto de Vale-Transporte (6%).
 
-## ✨ Funcionalidades do Código
+Saídas: Cálculo imediato do INSS (alíquotas progressivas), IRRF, valor líquido e base de cálculo.
 
-O código é uma aplicação Single Page (SPA) com navegação por abas para alternar entre os dois principais cálculos:
+Diferencial: Exibição do FGTS (custo do empregador), que não é descontado do funcionário, mas compõe a reserva técnica do trabalhador.
 
-### 1. Salário Líquido Mensal
+2. 13º Salário
+Projeta o recebimento da gratificação natalina.
 
-Calcula o valor líquido a ser recebido pelo empregado após os descontos obrigatórios e opcionais.
+Funcionalidade: Permite calcular o valor proporcional aos meses trabalhados no ano corrente.
 
-* **Entradas:** Salário Bruto, Número de Dependentes (para IRRF) e opção de desconto de Vale-Transporte.
-* **Saídas Detalhadas:**
-    * Desconto de **INSS** (Progressivo, calculado sobre o Salário Bruto).
-    * Desconto de **IRRF** (Calculado sobre a Base Líquida de INSS e Dependentes).
-    * Desconto de **Vale-Transporte** (Máximo de 6% sobre o Bruto, se ativado).
-    * **Total de Descontos** e o **Salário Líquido Estimado**.
-    * **FGTS** Mensal e Anual (8% sobre o bruto - valor depositado pelo empregador, não descontado do salário).
+Detalhamento: Divide o resultado entre a 1ª parcela (integral, sem descontos de impostos) e a 2ª parcela (onde incidem as deduções de INSS e IRRF sobre o valor total).
 
-### 2. 13º Salário (Gratificação Natalina)
+3. Comparação de Cenários
+Ferramenta analítica para tomada de decisão em propostas de emprego ou reajustes.
 
-Simula o cálculo do 13º salário, considerando a proporcionalidade de meses trabalhados e a retenção de impostos.
+Lógica: Permite a inserção de dois cenários (A e B) simultaneamente.
 
-* **Entradas:** Salário Bruto Base, Meses Trabalhados (1 a 12) e Número de Dependentes.
-* **Saídas Detalhadas:**
-    * Cálculo do **Valor Bruto Proporcional** ($$\text{Bruto} \times \frac{\text{Meses}}{12}$$).
-    * Simulação da **1ª Parcela (50% do Bruto Proporcional)**, paga sem descontos.
-    * Cálculo da **2ª Parcela Líquida**, que absorve os descontos integrais de **INSS** e **IRRF** sobre o valor bruto total.
-    * **Total Líquido do 13º** (Soma das duas parcelas).
+Análise de Delta: O sistema calcula automaticamente a diferença real (líquida) entre os dois valores, apresentando a porcentagem de ganho efetivo e o aumento na carga tributária entre as faixas.
 
----
+4. Participação nos Lucros e Resultados (PLR)
+Cálculo específico para bonificações anuais ou semestrais.
 
-## ⚙️ Detalhes e Tabelas de Referência (2025)
+Tributação Exclusiva: Aplica a tabela de IRRF exclusiva para PLR (Lei 15.191/2025), que possui faixas de isenção e alíquotas distintas do salário mensal.
 
-A lógica de cálculo utiliza constantes e funções auxiliares em JavaScript para aplicar a legislação brasileira.
+Isenções: O sistema ignora automaticamente descontos de INSS e FGTS, conforme previsto em lei para esta modalidade de rendimento.
 
-### 1. Tabelas Fiscais Utilizadas
+Usabilidade e Interface
+A aplicação foi desenvolvida com foco em experiência do usuário (UX) e precisão visual:
 
-O código utiliza as seguintes constantes e faixas de alíquotas, baseadas nas projeções vigentes para 2025:
+Inputs Híbridos: O usuário pode digitar o valor diretamente ou utilizar sliders (controles deslizantes) para ajustes rápidos e visualização dinâmica dos impactos fiscais.
 
-* **INSS:** Faixas de 7.5% a 14% (Progressiva). Teto de **R$ 8.157,41**.
-* **IRRF:** Faixas de 0% a 27.5% (Progressiva). Dedução por Dependente: **R$ 189,59**.
-* **VT (Vale-Transporte):** Alíquota fixa de **6%** sobre o Salário Bruto.
-* **FGTS:** Alíquota fixa de **8%** sobre o Salário Bruto.
+Visualização de Dados: Utiliza a biblioteca Chart.js para renderizar gráficos de rosca (doughnut) que demonstram a proporção entre salário líquido e impostos.
 
-### 2. Funções de Lógica em JavaScript
+Atualização em Tempo Real: Implementação de funções debounced que garantem que os cálculos sejam reprocessados conforme o usuário interage com os campos, sem sobrecarregar o processamento do navegador.
 
-As principais funções de cálculo são:
+Persistência de Dados via URL: A função de compartilhamento gera um link contendo os parâmetros de cálculo codificados. Isso permite que um usuário envie uma simulação específica para outra pessoa ou salve o cálculo nos favoritos.
 
-* `calcularINSS(salarioBruto)`: Aplica a alíquota efetiva progressiva do INSS.
-* `calcularIRRF(baseCalculoIRRF)`: Aplica a tabela progressiva do IRRF após as deduções.
-* `calcularVT(...)` e `calcularFGTS(...)`: Funções para descontos fixos/percentuais.
-* `calcularSalarioLiquido()`: Executa o fluxo de cálculo mensal e atualiza a interface.
-* `calcularDecimoTerceiro()`: Executa o fluxo de cálculo do 13º e atualiza a interface.
+Portabilidade: O design é responsivo, adaptando a disposição das colunas e tabelas para dispositivos móveis e desktops.
 
-### 3. Estrutura e Estilo
+Especificações Técnicas
+Linguagem: JavaScript Vanilla (ES6+).
 
-O CSS adota um **Tema Preto e Branco** (alto contraste) para clareza e minimalismo, usando variáveis CSS para fácil manutenção das cores. A navegação entre os cálculos é controlada pela função `openTab`, garantindo que apenas o conteúdo da aba ativa seja exibido.
+Estilização: CSS3 utilizando Variáveis (Custom Properties) para fácil manutenção de temas e padrões visuais.
 
----
+Dependências: Chart.js (via CDN) para a renderização gráfica.
 
-**Aviso Legal:** Esta é uma **SIMULAÇÃO**. Os valores finais podem sofrer variações por conta de descontos adicionais não previstos (convênios, empréstimos, etc.) ou reajustes governamentais nas tabelas. Consulte sempre seu holerite oficial.
+Segurança de Dados: Por ser uma ferramenta client-side, nenhum dado financeiro inserido é enviado a servidores externos; todo o processamento ocorre localmente no navegador do usuário.
+
+Notas de Isenção de Responsabilidade
+Os resultados apresentados são estimativas baseadas na legislação vigente para 2025. Valores reais de folha de pagamento podem variar de acordo com convenções coletivas de trabalho, benefícios específicos da empresa (planos de saúde, previdência privada) ou faltas e horas extras não contabilizadas nesta simulação.
